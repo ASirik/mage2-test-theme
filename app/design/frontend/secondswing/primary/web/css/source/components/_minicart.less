@@ -1,0 +1,83 @@
+& when (@media-common = true) {
+    .block-minicart {
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+        padding-left: 0;
+        padding-right: 0;
+
+        .minicart-items-wrapper {
+            width: 100%;
+        }
+
+        .block-content {
+            button.checkout {
+                background: @mainRed;
+            }
+        }
+
+        .product-item {
+            .product {
+                display: flex;
+            }
+            .product-item-details {
+                margin-left: 40px;
+
+                .product-item-name {
+                    margin-left: 0;
+                    max-width: 201px;
+                    float: left;
+                }
+
+                .product-item-pricing {
+                    float: right;
+                    width: 100%;
+
+                    .price-container {
+
+                    }
+                }
+
+                .details-qty.qty {
+                    input {
+                        border: none;
+                        text-align: left;
+                    }
+
+                    label {
+                        font-size: 12px;
+                        line-height: 18px;
+                    }
+                }
+            }
+        }
+
+        .subtotal {
+            display: flex;
+
+            .price-container {
+                margin-left: auto;
+            }
+
+            .label {
+                font-family: @font-family__base;
+                font-weight: bold;
+                font-size: 16px;
+            }
+        }
+    }
+
+    .actions {
+        .view-cart-action {
+            .lib-css(border-top, 1px solid @minicart__border-color);
+            padding-top: 15px;
+        }
+    }
+
+    .action.viewcart {
+        text-decoration: underline;
+        color: @color-black;
+    }
+}
+
+.paypal-button.paypal-button-color-gold {
+    background: none !important;
+}

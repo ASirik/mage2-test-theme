@@ -1,0 +1,78 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php /** @var $block \Magento\Checkout\Block\Cart\Shipping */ ?>
+<?php
+/** @var $block \SecondSwing\Checkout\Helper\CheckoutHelper */
+$checkoutHelper = $this->helper('\SecondSwing\Checkout\Helper\CheckoutHelper');
+
+$subTotal        = $checkoutHelper->getsubTotal();
+$thresholdAmount           = $checkoutHelper->getFreeShippingTresholdAmount();
+$isFreeShippingBlockActive = $checkoutHelper->isFreeShippingBlockActive();
+$free_shipping             = 0;
+$free_shipping_detail      = "";
+if ($isFreeShippingBlockActive && $thresholdAmount && floatval($subTotal) < $thresholdAmount) {
+    //Calculate free shipping
+    $free_shipping          = floatval($thresholdAmount) - floatval($subTotal);
+    $free_shipping_formated = $checkoutHelper->getfreeshippingprice($free_shipping);
+    $free_shipping_detail   = "<span class='free-shipping-block-message'>You are <span class='free_ship_away'>$free_shipping_formated</span> away from receiving free standard shipping</span>";
+}
+?>
+<?php if ($isFreeShippingBlockActive && $thresholdAmount && floatval($subTotal) < $thresholdAmount): ?>
+    <div class="free-shipping-block">
+        <div class="free-shipping-progress-bar">
+            <span style="width:<?php echo (floatval($subTotal)/$thresholdAmount) * 100; ?>%"></span>
+        </div>
+        <?php echo $free_shipping_detail; ?>
+    </div>
+<?php endif; ?>
+
+<div id="block-shipping"
+     class="block shipping"
+     data-mage-init='{"collapsible":{"openedState": "active", "saveState": true}}'
+>
+    <div class="title" data-role="title">
+        <strong id="block-shipping-heading" role="heading" aria-level="2">
+            <?= $block->getQuote()->isVirtual()
+                ? $block->escapeHtml(__('Estimated Tax'))
+                : $block->escapeHtml(__('Estimated Shipping and Tax'))
+            ?>
+        </strong>
+    </div>
+    <div class='exclusions'>*some exclusions apply</div>
+    <div id="block-summary"
+         data-bind="scope:'block-summary'"
+         class="content"
+         data-role="content"
+         aria-labelledby="block-shipping-heading"
+    >
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <script type="text/x-magento-init">
+            {
+                "#block-summary": {
+                    "Magento_Ui/js/core/app": <?= /* @noEscape */ $block->getJsLayout() ?>
+                }
+            }
+        </script>
+        <script>
+            window.checkoutConfig = <?= /* @noEscape */ $block->getSerializedCheckoutConfig() ?>;
+            window.customerData = window.checkoutConfig.customerData;
+            window.isCustomerLoggedIn = window.checkoutConfig.isCustomerLoggedIn;
+            require([
+                'mage/url',
+                'Magento_Ui/js/block-loader',
+                'Magento_Checkout/js/model/quote'
+            ], function(url, blockLoader, quote) {
+                blockLoader(
+                    "<?= $block->escapeJs($block->escapeUrl($block->getViewFileUrl('images/loader-1.gif'))) ?>"
+                );
+                return url.setBaseUrl('<?= $block->escapeJs($block->escapeUrl($block->getBaseUrl())) ?>');
+            })
+        </script>
+
+    </div>
+</div>

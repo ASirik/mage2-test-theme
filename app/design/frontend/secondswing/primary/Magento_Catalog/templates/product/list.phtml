@@ -1,0 +1,717 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+use Magento\Framework\App\Action\Action;
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Catalog\Block\Product\ListProduct
+ */
+?>
+<?php
+$_productCollection = $block->getLoadedProductCollection();
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+/** @var \Magento\Framework\Pricing\Helper\Data $_priceHelper */
+$_priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+/** @var \SecondSwing\SearchBy\Helper\Data $searchHelper */
+$searchHelper = $this->helper('SecondSwing\SearchBy\Helper\Data');
+/** @var \SecondSwing\CatalogImages\Helper\ImageUrlHelper $imageHelper */
+$imageHelper = $this->helper('\SecondSwing\CatalogImages\Helper\ImageUrlHelper');
+
+$isPmp = $searchHelper->getIsPmp();
+$productListingIds = $searchHelper->getProductListingIds();
+$productListingSql = $searchHelper->getProductListingSql();
+?>
+<?php if (is_array($productListingIds)): ?>
+<!-- IDs: <?= implode(',', $productListingIds) ?> -->
+<?php endif; ?>
+<?php /*if ($productListingSql): ?>
+<!--
+SQL: todo, remove this soon
+
+<?php echo $productListingSql; ?>
+
+-->
+<?php endif;//*/ ?>
+<?php if (!$_productCollection->count()): ?>
+    <div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+<?php else: ?>
+<?php
+
+    $skus = [];
+    foreach ($_productCollection as $_product) {
+        if ($_product->getTypeId() == 'configurable') {
+            $skus[] = $_product->getSku();
+        }
+    }
+
+    $urlRewrites = (count($skus) && !$isPmp)
+        ? $searchHelper->getUrlRewritesForSkus($skus)
+        : [];
+
+?>
+    <?php echo $block->getToolbarHtml() ?>
+    <?php echo $block->getAdditionalHtml() ?>
+    <?php
+    if ($block->getMode() == 'grid') {
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    } else {
+        $viewMode = 'list';
+        $image = 'category_page_list';
+        $showDescription = true;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+    }
+    /**
+     * Position for actions regarding image size changing in vde if needed
+     */
+    $pos = $block->getPositioned();
+    ?>
+    <!-- PMP: <?php echo (int) $isPmp; ?> -->
+    <div class="products wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+        <?php $iterator = 1; ?>
+        <ol class="products list items product-items">
+            <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+            <?php foreach ($_productCollection as $_product): ?>
+            <?php
+                $isIronSet = false;
+                $productCategoryAttribute = $_product->getResource()->getAttribute('g2_category');
+                if ($productCategoryAttribute->usesSource()) {
+                    $optionId = $_product->getData('g2_category');
+                    $productCategory = $productCategoryAttribute->getSource()->getOptionText($optionId);
+                    if (strtolower($productCategory) == 'iron set' || is_int(strpos(strtolower($_product->getName()), 'iron set'))) {
+                        $isIronSet = true;
+                    }
+                }
+                $productModelAttribute = $_product->getResource()->getAttribute('g2_model');
+                if ($productModelAttribute->usesSource()) {
+                    $productModelOptionId = $_product->getData('g2_model');
+                    $productModel = $productModelAttribute->getSource()->getOptionText($productModelOptionId);
+                }
+                $itemHasUsed = $_product->getData('item_has_used');
+                $itemIsNew = $_product->getData('item_is_new');
+                $itemCategory = $this->getLayer()
+                    ? $this->getLayer()->getCurrentCategory()->getName()
+                    : '';
+
+                $itemIsConfigurable = false;
+                $isEndOfLife = $_product->getData('g2_endoflife');
+                $hasNewVariants = $_product->getData('g2_hasnewvariants');
+		$siteCode = $searchHelper->getSiteCode();
+
+                if ($_product->getTypeId() == 'configurable') {
+                    $itemIsConfigurable = true;
+                }
+                $defaultCategory = false;
+                $defaultCategoryCssclass = '';
+                if ($itemCategory == 'Default Category') {
+                    $defaultCategory = true;
+                    $defaultCategoryCssclass = ' default-category';
+                }
+                $pmpCssclass = '';
+                if ($isPmp && $itemIsConfigurable) {
+                    $pmpCssclass = ' red-outline';
+                }
+
+                $productImage = $block->getImage($_product, $image);
+                if ($pos != null) {
+                    $position = ' style="left:' . $productImage->getWidth() . 'px;'
+                        . 'top:' . $productImage->getHeight() . 'px;"';
+                }
+                $productImageUrl = $imageHelper->getCleanUrl('medium', $_product->getSku());
+                $productAltname = $_helper->productAttribute($_product, $_product->getName(), 'name');
+                $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                $brand = ucwords(strtolower(htmlentities($_product->getAttributeText('g2_brand'))));
+                $titleWithBrandAndItemCat = ucwords(strtolower($productAltname));
+                $titleWithoutBrandWithItemCat = trim(str_replace($brand, '', $titleWithBrandAndItemCat), ' ');
+                $titleWithoutBrandAndItemCat = trim(str_replace($itemCategory, '', $titleWithoutBrandWithItemCat), ' ');
+                //$titleExtractedFromItemCategory = $itemCategory;
+                $titleWithoutBrandAndItemCatAndPm = $titleWithoutBrandAndItemCat;
+                if ($productModel == 'All') {
+                    $titleWithoutBrandAndItemCatAndPm = trim(str_replace($productModel, '', $titleWithoutBrandAndItemCat), ' ');
+                }
+                $title = $titleWithoutBrandAndItemCatAndPm;
+                $title = (strpos($title, 'Mens') !== false) ? str_replace('Mens', 'Men\'s', $title) : $title;
+                $title = (strpos($title, 'Womens') !== false) ? str_replace('Womens', 'Women\'s', $title) : $title;
+                $title = (strpos($title, 'Complete Golf Club Set') !== false) ? str_replace('Complete Golf Club Set', 'Complete Set', $title) : $title;
+                $title = (strpos($productCategory, 'Rangefinders') !== false) ? str_ireplace($productCategory, '', htmlspecialchars_decode($title)) : $title;
+                $itemCategory = (strpos($itemCategory, 'Mens') !== false) ? str_replace('Mens', 'Men\'s', $itemCategory) : $itemCategory;
+                $itemCategory = (strpos($itemCategory, 'Womens') !== false) ? str_replace('Womens', 'Women\'s', $itemCategory) : $itemCategory;
+                $titleExtractedFromItemCategory = str_replace($productModel, '', $itemCategory);
+                $minPriceHtml = $_priceHelper->currency($_product->getMinPrice());
+                $instateMinPrice = $_product->getData('g2_min_instate_price');
+                $instateMaxPrice = $_product->getData('g2_max_instate_price');
+                $outofstateMinPrice = $_product->getData('g2_min_outofstate_price');
+                $outofstateMaxPrice = $_product->getData('g2_max_outofstate_price');
+                $defaultIronsInSet = 1;
+                $clubsTextPlaceHolder = ' CLUBS';
+                if($isIronSet) {
+                    $ironsIncludedInSet = $_product->getData('ironset_included_clubs');
+                    //Note the content of ironset_include_clubs contains a comma separated list, an explode and count should provide the default num of irons in IronSet
+                    if(!empty($ironsIncludedInSet)){
+                        $defaultIronsInSet = count(explode(',', $ironsIncludedInSet));
+                        $clubsTextPlaceHolder = $defaultIronsInSet . ' CLUBS';
+                    } else {
+                        $clubsTextPlaceHolder = '6 CLUBS';
+                    }
+                }
+                $hasANewPrice = $_product->getMinPrice() > 0;
+                $isShowingNew = false;
+                $msrp = $_product->getData('g2_retailnewprice');
+                $itemType = $_product->getAttributeText('g2_itemtype');
+                $categories = array('Driver', 'Putter', 'Fairway Wood', 'Wedge', 'Iron Set', 'Single Iron', 'Hybrid', 'Complete Golf Club Set');
+                $itemCategoryWithoutBrand = $itemCategory;
+                if ($itemCategory) {
+                     $pos = strpos($itemCategory, $brand);
+                     if ($pos !== false) {
+                         $itemCategoryWithoutBrand = substr_replace($itemCategory, '', $pos, strlen($brand)); // first occurrence only
+                     }
+                     foreach ($categories as $cat) {
+                         $pos = strpos($itemCategoryWithoutBrand, $cat);
+                         if ($pos !== false) {
+                             $titleExtractedFromItemCategory = str_replace($cat, '', $itemCategoryWithoutBrand);
+                         }
+                     }
+                 }
+                $pluralsToSingular = array('Shirts', 'Vests', 'Sweaters', 'Belts', 'Hats', 'Skorts', 'Bags', 'Carts');
+                foreach ($pluralsToSingular as $plural) {
+                    $titleExtractedFromItemCategory = (strpos($titleExtractedFromItemCategory, $plural) !== false) ? trim(str_replace($plural, substr_replace($plural, '', -1), $titleExtractedFromItemCategory)) : $titleExtractedFromItemCategory;
+                }
+                ?>
+                <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li style="cursor:pointer;" onclick="window.location.href=\'' . $_product->getProductUrl() . '\';" class="item product product-item' . $pmpCssclass . '">' : '</li><li class="item product product-item" style="cursor:pointer;" onclick="window.location.href=\'' . $_product->getProductUrl() . '\';">' ?>
+
+                        <?php if ($isPmp): // Product Model Page ?>
+
+                            <?php if ($itemIsConfigurable): ?>
+                                <?php if ($itemIsNew): ?>
+                                    <?php if ($itemHasUsed): // PMP Parent, Has New and Used ?>
+                                <!-- PMP Parent, Has New and Used -->
+                                <div class="pmp product-box product-item-info" data-container="product-grid"
+                                     data-sku="<?= $_product->getSku() ?>"
+                                     data-endoflife="<?= $isEndOfLife ?>"
+                                     data-itemhasused="<?= $itemHasUsed ?>"
+                                     data-hasnewvariants="<?= $hasNewVariants ?>"
+                                >
+                                    <div class="red-corner">
+                                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                                        <span class="new-corner">NEW</span>
+                                        <span class="product-image-container">
+                                            <span class="product-image-wrapper">
+                                                <img class="product-image-photo" src="<?php echo $productImageUrl; ?>"  alt="<?php echo $productAltname; ?>">
+                                            </span>
+                                        </span>
+                                    </a>
+                                    </div>
+                                    <div class="product details product-item-details">
+
+                                        <?php if ($brand): ?>
+                                            <div class="product-brand">
+                                                <?= $brand ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="product-title">
+                                            <div class="p-title">
+                                                <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $title; ?>">
+                                                    <?php echo $title; ?>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="row product-info pmp<?php echo $defaultCategoryCssclass; ?>">
+                                            <div class="col-xs-12">
+                                                <?php if ($hasANewPrice) : //hides all zero prices on new variants ?>
+                                                    <div class="pmp-new">NEW</div>
+                                                    <?php if (in_array($_product->getData('g2_price_display'), [\SecondSwing\ProductPrice\Helper\Data::NS_ADDTOCART, \SecondSwing\ProductPrice\Helper\Data::NS_CLICK,\SecondSwing\ProductPrice\Helper\Data::NS_CALL])):?>
+                                                        <?php echo $block->getChildBlock('pmp_list_price')->setData('product', $_product)->toHtml();?>
+                                                    <?php else: ?>
+                                                    <div class="pmp-starting-at">STARTING AT</div>
+                                                    <div class="product-price">
+                                                        <div class="product-rate pmp">
+                                                            <?php if($isIronSet && !$isEndOfLife ) : //if product is new ironset and product model is not endOfLife?>
+                                                                <?= $_priceHelper->currency($defaultIronsInSet * $_product->getMinimalPrice()) ?>
+                                                            <?php else: // not ironset but new ?>
+                                                                <?= $_priceHelper->currency($_product->getMinimalPrice()) ?>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="pmp-per-club">
+                                                        <?php if ($isIronSet && !$isEndOfLife) { echo $clubsTextPlaceHolder; } ?>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <div class="pmp-build-it">
+                                                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>"><button class="pure-material-button-contained">BUILD IT</button></a>
+                                                    </div>
+                                                <?php endif;?>
+                                            </div>
+                                        </div>
+
+                                    <?php else: // PMP Parent, Only New products ?>
+                                        <!-- PMP Parent, Only New products -->
+                                        <div class="pmp product-box product-item-info" data-container="product-grid"
+                                             data-sku="<?= $_product->getSku() ?>"
+                                             data-endoflife="<?= $isEndOfLife ?>"
+                                             data-itemhasused="<?= $itemHasUsed ?>"
+                                             data-hasnewvariants="<?= $hasNewVariants ?>"
+                                        >
+                                            <div class="red-corner">
+                                                <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                                                    <span class="new-corner">NEW</span>
+                                                    <span class="product-image-container">
+                                            <span class="product-image-wrapper">
+                                            <img class="product-image-photo" src="<?php echo $productImageUrl; ?>"  alt="<?php echo $productAltname; ?>">
+                                            </span>
+                                        </span>
+                                                </a>
+                                            </div>
+                                            <div class="product details product-item-details">
+
+                                                <?php if ($brand): ?>
+                                                    <div class="product-brand">
+                                                        <?= $brand ?>
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <div class="product-title">
+                                                    <div class="p-title">
+                                                        <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $title; ?>">
+                                                            <?php echo $title; ?>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row product-info pmp<?php echo $defaultCategoryCssclass; ?>">
+                                                    <div class="col-xs-12">
+                                                        <?php if (in_array($_product->getData('g2_price_display'), [\SecondSwing\ProductPrice\Helper\Data::NS_ADDTOCART, \SecondSwing\ProductPrice\Helper\Data::NS_CLICK,\SecondSwing\ProductPrice\Helper\Data::NS_CALL])):?>
+                                                            <?php echo $block->getChildBlock('list_price')->setData('product', $_product)->toHtml();?>
+                                                        <?php else: ?>
+                                                            <?php if ($hasANewPrice) : //hides all zero prices on new variants ?>
+                                                                <div class="pmp-new">NEW</div>
+                                                                <div class="pmp-starting-at">STARTING AT</div>
+                                                                <div class="product-price">
+                                                                    <div class="product-rate pmp">
+                                                                        <?php if($isIronSet && !$isEndOfLife) : //if product is new ironset and not endOfLife?>
+                                                                            <?= $_priceHelper->currency($defaultIronsInSet * $_product->getMinimalPrice()) ?>
+                                                                        <?php else: // not ironset but new ?>
+                                                                            <?= $_priceHelper->currency($_product->getMinimalPrice()) ?>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="pmp-per-club">
+                                                                    <?php if ($isIronSet && !$isEndOfLife ) { echo $clubsTextPlaceHolder; } ?>
+                                                                </div>
+                                                                <div class="pmp-build-it">
+                                                                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>"><button class="pure-material-button-contained">BUILD IT</button></a>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+
+                                    <?php endif; ?>
+                                <?php else: // PMP Parent, Only Used products  ?>
+                                    <!-- PMP Parent, Only Used products -->
+                                    <div class="product-box product-item-info" data-container="product-grid"
+                                         data-sku="<?= $_product->getSku() ?>"
+                                         data-endoflife="<?= $isEndOfLife ?>"
+                                         data-itemhasused="<?= $itemHasUsed ?>"
+                                         data-hasnewvariants="<?= $hasNewVariants ?>"
+                                    >
+                                        <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                                            <span class="product-image-container">
+                                                <span class="product-image-wrapper">
+                                                    <img class="product-image-photo" src="<?php echo $productImageUrl; ?>"  alt="<?php echo $productAltname; ?>">
+                                                </span>
+                                            </span>
+                                        </a>
+                                    <div class="product details product-item-details">
+
+                                        <div class="row product-info<?php echo $defaultCategoryCssclass; ?>">
+                                            <div class="col-xs-12">
+                                                <div class="product-price">
+                                                    <div class="product-rate">
+                                                        <span style="color:black;">Used: </span>
+                                                        <?php if ($siteCode === 'in_region') : ?>
+                                                            <?= $_priceHelper->currency($instateMinPrice) ?> - <?= $_priceHelper->currency($instateMaxPrice) ?>
+                                                        <?php else: ?>
+                                                            <?= $_priceHelper->currency($outofstateMinPrice) ?> - <?= $_priceHelper->currency($outofstateMaxPrice) ?>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                <?php endif; ?>
+                            <?php else: // Not a configurable. PMP simple variant, show Flex,Dext,Loft,Length ?>
+                                <!-- Not a configurable. PMP simple variant -->
+                                <div class="product-box product-item-info" data-container="product-grid">
+                                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                                        <span class="product-image-container">
+                                            <span class="product-image-wrapper">
+                                                <img class="product-image-photo" src="<?php echo $productImageUrl; ?>"  alt="<?php echo $productAltname; ?>">
+                                            </span>
+                                        </span>
+                                    </a>
+                                    <div class="product details product-item-details">
+
+                                        <?php if ($titleExtractedFromItemCategory): ?>
+                                            <div class="pmp-product-category">
+                                                <?= $titleExtractedFromItemCategory ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="pmp-simple row product-info<?php echo $defaultCategoryCssclass; ?>">
+                                            <div class="col-xs-12">
+                                                <div class="product-price">
+                                                    <div class="product-rate">
+                                                        <?php if (in_array($_product->getData('g2_price_display'), [\SecondSwing\ProductPrice\Helper\Data::NS_ADDTOCART, \SecondSwing\ProductPrice\Helper\Data::NS_CLICK,\SecondSwing\ProductPrice\Helper\Data::NS_CALL])):?>
+                                                            <?php echo $block->getChildBlock('simple_list_price')->setData('product', $_product)->toHtml();?>
+                                                        <?php else: ?>
+                                                        <div class="current-price"><?= $_priceHelper->currency($_product->getMinPrice()) ?></div>
+                                                        <?php endif; ?>
+                                                        <div class="was-price">WAS <span class="text-strikethrough"><?= $_priceHelper->currency($msrp) ?></span></div>
+                                                    </div>
+                                                </div>
+                                                <?php
+                                                $numOfLines = '2';
+                                                $condition = '';
+                                                $conditionColor = 'na';
+                                                $conditions = ["Above Average" => "Above Average", "Above Average 9.0" => "Above Average", "Average" => "Average", "Average 8.0" => "Average", "Below Average" => "Below Average", "Below Average 7.0" => "Below Average", "Blemished" => "Below Average", "Brand New 10.0" => "Brand New", "New" => "Brand New", "Fully Functional" => "Fully Functional", "Mint 9.5" => "Mint", "New" => "New", "New Uncut" => "New/Uncut", "New W/ Logo" => "New w/ Logo", "New W/O Box" => "New w/o Box", "Poor 6.0" => "Poor", "Pull" => "Pull", "Used W/ Adapter" => "Used w/ Adapter"];
+                                                $conditionColors = ["Above Average" => "above-average", "Average" => "average", "Below Average" => "below-average", "Brand New" => "brand-new", "Fully Functional" => "fully-functional", "Mint" => "mint", "New" => "new", "New/Uncut" => "new-uncut", "New w/ Logo" => "new-w-logo", "New w/o Box" => "new-wo-box", "Poor" => "poor", "Pull" => "pull", "Used w/ Adapter" => "used-w-adapter"];
+                                                $conditionAttribute = $_product->getResource()->getAttribute('g2_condition');
+                                                if ($conditionAttribute) {
+                                                    $conditionValue = $conditionAttribute->getFrontend()->getValue($_product);
+                                                    if (isset($conditions[$conditionValue])) {
+                                                        $condition = $conditions[$conditionValue];
+                                                        $conditionColor = $conditionColors[$condition];
+                                                    }
+                                                }
+                                                if ($itemType == 'Golf Clubs') {
+                                                    switch ($productCategory) {
+                                                        case "Driver":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Loft" => "g2_club_loft", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '7';
+                                                            break;
+                                                        case "Putter":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Length" => "g2_club_length", "Lie Angle" => "g2_lieangle"];
+                                                            $numOfLines = '4';
+                                                            break;
+                                                        case "Wedge":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Type" => "g2_subcategory", "Loft" => "g2_club_loft", "Bounce" => "g2_bounce", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '9';
+                                                            break;
+                                                        case "Fairway Wood":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Type" => "g2_subcategory", "Loft" => "g2_club_loft", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '8';
+                                                            break;
+                                                        case "Hybrid":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Type" => "g2_subcategory", "Loft" => "g2_club_loft", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '8';
+                                                            break;
+                                                        case "Chipper":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '5';
+                                                            break;
+                                                        case "Single Iron":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Type" => "g2_subcategory", "Material" => "g2_club_shaftmatl", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '8';
+                                                            break;
+                                                        case "Iron Set":
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Makeup" => "g2_subcategory", "Material" => "g2_club_shaftmatl", "Flex" => "g2_shaft_flex", "Shaft" => "g2_shaft_type"];
+                                                            $numOfLines = '7';
+                                                            break;
+                                                        case "Complete Golf Club Set":
+                                                            $pmpAttributes = ["Hand" => "g2_dexterity", "Material" => "g2_club_shaftmatl", "Flex" => "g2_shaft_flex"];
+                                                            $numOfLines = '4';
+                                                            break;
+                                                        default:
+                                                            $pmpAttributes = ["Dexterity" => "g2_dexterity", "Condition" => "g2_condition", "Type" => "g2_subcategory", "Shaft" => "g2_shaft_type", "Flex" => "g2_shaft_flex", "Loft" => "g2_club_loft", "Length" => "g2_club_length", "Material" => "g2_club_shaftmatl"];
+                                                            $numOfLines = '8';
+                                                    }
+                                                }
+                                                if ($itemType == 'Apparel') {
+                                                    $condition = 'New';
+                                                    $conditionColor = 'new';
+                                                    if ($conditionAttribute) {
+                                                        if ($conditionValue == 'New W/ Logo') {
+                                                            $condition = 'New w/ Logo';
+                                                            $conditionColor = 'new-w-logo';
+                                                        }
+                                                    }
+                                                    $pmpAttributes = ["Size" => "g2_top_size", "Color" => "g2_top_color", "Style" => "g2_top_style", "Waist" => "g2_bottom_size", "Length" => "g2_bottom_length", "Color" => "g2_bottom_color"];
+                                                    $numOfLines = '3';
+                                                    if (strpos($productCategory, 'Pants') !== false) {
+                                                        $numOfLines = '4';
+                                                    }
+                                                }
+                                                if ($itemType == 'Accessories' && strpos($productCategory, 'Shoe') !== false) {
+                                                    $condition = 'New';
+                                                    $conditionColor = 'new';
+                                                    $pmpAttributes = ["Size" => "g2_shoes_size", "Width" => "g2_shoes_width", "Spikes" => "g2_shoes_spikes", "Color" => "g2_shoes_color"];
+                                                    $numOfLines = '5';
+                                                }
+                                                if ($itemType == 'Accessories' && strpos($productCategory, 'Bag') !== false) {
+                                                    $conditionAttribute = $_product->getResource()->getAttribute('g2_condition');
+                                                    if ($conditionAttribute) {
+                                                        $conditionValue = $conditionAttribute->getFrontend()->getValue($_product);
+                                                        if (isset($conditions[$conditionValue])) {
+                                                            $condition = $conditions[$conditionValue];
+                                                            $conditionColor = $conditionColors[$condition];
+                                                        }
+                                                    }
+                                                    $pmpAttributes = ["Color" => "g2_bag_color"];
+                                                    $numOfLines = '2';
+                                                }
+                                                if ($itemType == 'Accessories' && strpos($productCategory, 'Cart') !== false) {
+                                                    $conditionAttribute = $_product->getResource()->getAttribute('g2_condition');
+                                                    if ($conditionAttribute) {
+                                                        $conditionValue = $conditionAttribute->getFrontend()->getValue($_product);
+                                                        if (isset($conditions[$conditionValue])) {
+                                                            $condition = $conditions[$conditionValue];
+                                                            $conditionColor = $conditionColors[$condition];
+                                                        }
+                                                    }
+                                                    $pmpAttributes = ["Color" => "g2_accessory_color"];
+                                                    $numOfLines = '2';
+                                                }
+                                                if (strpos($productCategory, 'GPS') !== false) {
+                                                    $condition = '';
+                                                    $conditionColor = 'na';
+                                                    $pmpAttributes = ["Type" => "g2_subcategory"];
+                                                    $numOfLines = '0';
+                                                }
+                                                echo '<div class="pmp-product-attributes">';
+                                                echo '<div class="pmp-attribute num-of-lines-' . $numOfLines . '">';
+                                                echo '<div class="pmp-product-condition condition-' . $conditionColor . '">' . $condition . '</div>';
+                                                if (isset($pmpAttributes)) {
+                                                    foreach ($pmpAttributes as $label => $attribute) {
+                                                        //echo $attribute . '<br>';
+                                                        $_getMyAttr = $_product->getResource()->getAttribute($attribute);
+                                                        if ($_getMyAttr) {
+                                                            $attrValue = $_getMyAttr->getFrontend()->getValue($_product);
+                                                            if ($attrValue != "" && $attrValue != "No") {
+                                                                //$attrLabel = $_getMyAttr->getStoreLabel();
+                                                                $attrLabel = $label;
+                                                                if ($attrLabel == 'Dexterity') {
+                                                                    switch ($attrValue) {
+                                                                        case "Right Handed":
+                                                                            $attrValue = 'Right';
+                                                                            break;
+                                                                        case "Left Handed":
+                                                                            $attrValue = 'Left';
+                                                                            break;
+                                                                        default:
+                                                                            //
+                                                                    }
+                                                                }
+                                                                if ($attrLabel == 'Bounce') {
+                                                                    $attrValue = trim(str_replace('Bounce', '', $attrValue));
+                                                                }
+                                                                if ($attrLabel == 'Flex') {
+                                                                    $attrValue = trim(str_replace('Flex', '', $attrValue));
+                                                                }
+                                                                echo '<span class="pmp-attribute-label">' . $attrLabel . ':</span> ' . $attrValue . '<br>';
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                echo '</div></div>';
+                                                ?>
+                                            </div>
+                                        </div>
+                            <?php endif; // end PMP logic ?>
+
+                        <?php else: // non-PMP pages, only configurable products, all other search and category pages ?>
+
+                            <div class="product-box product-item-info<?php if ($itemCategory === 'Default Category') { echo ' for-search'; } ?>" data-container="product-grid"
+                                 data-sku="<?= $_product->getSku() ?>"
+                                 data-endoflife="<?= $isEndOfLife ?>"
+                                 data-itemhasused="<?= $itemHasUsed ?>"
+                                 data-hasnewvariants="<?= $hasNewVariants ?>"
+                            >
+                                <a href="<?php /* @escapeNotVerified */
+                                echo $itemHasUsed && isset($urlRewrites[$_product->getId()])
+                                    ? '/' . $urlRewrites[$_product->getId()]
+                                    : $_product->getProductUrl()
+                                ?>" class="product photo product-item-photo" tabindex="-1">
+                                    <span class="product-image-container">
+                                        <span class="product-image-wrapper">
+                                            <img class="product-image-photo" src="<?php echo $productImageUrl; ?>"  alt="<?php echo $productAltname;?>">
+                                        </span>
+                                    </span>
+                                </a>
+                            <div class="product details product-item-details">
+
+                            <?php if ($brand): ?>
+                                <div class="product-brand">
+                                    <?= $brand ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="product-title<?= (strpos($productCategory, 'Rangefinders') !== false) ? ' num-of-lines-3' : '' ?>">
+                                <div class="p-title">
+                                    <a href="<?php echo $itemHasUsed && isset($urlRewrites[$_product->getId()])
+                                        ? '/' . $urlRewrites[$_product->getId()]
+                                        : $_product->getProductUrl() ?>" title="<?php echo $title; ?>">
+                                        <?php echo $title; ?>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php if ($itemCategory !== 'Default Category'): ?>
+                                <div class="product-category">
+                                    <?= (strpos($productCategory, 'Rangefinder') !== false) ? 'GPS & Rangefinders' : $itemCategory ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($itemIsNew): ?>
+                                <?php if ($itemHasUsed): // has New and Used ?>
+
+                                    <div class="row product-info<?php echo $defaultCategoryCssclass; ?>">
+                                        <div class="col-xs-12">
+                                                <div class="product-price">
+                                                    <div class="product-rate">
+
+                                                        <?php if (!$isEndOfLife || ($isEndOfLife && $hasNewVariants)): // dont show new price if g2_endoflife == 1 and hasNewVarints is false ?>
+                                                            <?php if ($hasANewPrice): //hides all zero prices on new variants ?>
+                                                                <div class="product-rate-new">
+                                                                    <div class="product-condition">NEW <?php if ($isIronSet) { echo $clubsTextPlaceHolder; } ?></div>
+                                                                    <?php if (in_array($_product->getData('g2_price_display'), [\SecondSwing\ProductPrice\Helper\Data::NS_ADDTOCART, \SecondSwing\ProductPrice\Helper\Data::NS_CLICK,\SecondSwing\ProductPrice\Helper\Data::NS_CALL])): ?>
+                                                                        <?php echo $block->getChildBlock('list_price')->setData('product', $_product)->toHtml(); ?>
+                                                                    <?php else: ?>
+                                                                        <?php if($isIronSet && !$isEndOfLife ) : //if product is new ironset ?>
+                                                                            <?= $_priceHelper->currency($defaultIronsInSet * $_product->getMinimalPrice()) ?>
+                                                                        <?php else: // not ironset but new ?>
+                                                                            <?= $_priceHelper->currency($_product->getMinimalPrice()) ?>
+                                                                        <?php endif; ?>
+                                                                    <?php endif; ?>
+                                                                    <?php $isShowingNew = true; ?>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
+                                                        <div class="<?php echo $hasNewVariants ? 'product-rate-used' : 'product-rate'; ?>">
+                                                            <?php $usedPriceLabel = 'USED FROM'; ?>
+                                                            <div class="product-condition"><?php echo (strpos($productCategory, 'Shoe') !== false || $itemType == 'Apparel') ? 'NEW' : $usedPriceLabel; ?></div>
+                                                         <?php if ((!$isShowingNew && $siteCode === 'in_region' &&  $_priceHelper->currency($instateMaxPrice) > $_priceHelper->currency($instateMinPrice)) || (!$isShowingNew && $siteCode !== 'in_region' &&  $_priceHelper->currency($outofstateMaxPrice) > $_priceHelper->currency($outofstateMinPrice))) : ?>
+                                                             <?php $usedPriceLabel = 'USED'; ?>
+                                                             <?php if ($siteCode === 'in_region') : ?>
+                                                                 <?= $_priceHelper->currency($instateMinPrice) ?> - <?= $_priceHelper->currency($instateMaxPrice) ?>
+                                                             <?php else: ?>
+                                                                 <?= $_priceHelper->currency($outofstateMinPrice) ?> - <?= $_priceHelper->currency($outofstateMaxPrice) ?>
+                                                             <?php endif; ?>
+                                                         <?php else: ?>
+                                                             <?php if ($siteCode === 'in_region') : ?>
+                                                                 <?= $_priceHelper->currency($instateMinPrice) ?>
+                                                             <?php else: ?>
+                                                                 <?= $_priceHelper->currency($outofstateMinPrice) ?>
+                                                             <?php endif; ?>
+                                                         <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                <?php else: // only New ?>
+
+                                    <div class="row product-info<?php echo $defaultCategoryCssclass; ?>">
+                                        <div class="col-xs-12">
+                                            <div class="product-price">
+                                                <?php if (!$isEndOfLife || ($isEndOfLife && $hasNewVariants)): // dont show new price if g2_endoflife == 1 and hasNewVarints is false ?>
+                                                    <?php if ($hasANewPrice) : //hides all zero prices on new variants ?>
+                                                        <?php if($isIronSet && !$isEndOfLife) : //if product is new ironset and not endOfLife?>
+                                                            <div class="product-rate"><?= $_priceHelper->currency($defaultIronsInSet * $_product->getMinimalPrice()) ?></div>
+                                                            <div class="product-condition">NEW <?= $clubsTextPlaceHolder ?></div>
+                                                        <?php else: // not ironset but new ?>
+                                                            <div class="product-rate"><?= $_priceHelper->currency($_product->getMinimalPrice()) ?></div>
+                                                            <div class="product-condition">NEW</div>
+                                                        <?php endif; ?>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <?php endif; ?>
+                            <?php elseif ($instateMinPrice > 1 && $instateMaxPrice > $instateMinPrice): // Used ?>
+
+                                <div class="row product-info<?php echo $defaultCategoryCssclass; ?>">
+                                    <div class="col-xs-12">
+                                        <div class="product-price">
+                                            <div class="product-rate">
+                                                <span style="color:black;">Used: </span>
+                                                <?php if ($siteCode === 'in_region') : ?>
+                                                    <?= $_priceHelper->currency($instateMinPrice) ?> - <?= $_priceHelper->currency($instateMaxPrice) ?>
+                                                <?php else: ?>
+                                                    <?= $_priceHelper->currency($outofstateMinPrice) ?> - <?= $_priceHelper->currency($outofstateMaxPrice) ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <?php else: // Used ?>
+
+                                <div class="row product-info<?php echo $defaultCategoryCssclass; ?>">
+                                    <div class="col-xs-12">
+                                        <div class="product-price">
+                                            <span style="color:black;">Used: </span>
+                                            <div class="product-rate">As low as:
+                                                <?php if ($siteCode === 'in_region') : ?>
+                                                    <?= $_priceHelper->currency($instateMinPrice) ?>
+                                                <?php else: ?>
+                                                    <?= $_priceHelper->currency($outofstateMinPrice) ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <div class="product-item-inner">
+                            <div class="product actions product-item-actions"<?php echo strpos($pos, $viewMode . '-actions') ? $position : ''; ?>>
+                                <div class="actions-primary"<?php echo strpos($pos, $viewMode . '-primary') ? $position : ''; ?>>
+                                    <?php if ($_product->isSaleable()): ?>
+                                        <?php /* removed add to cart button */  ?>
+                                    <?php else: ?>
+                                        <?php if ($_product->getIsSalable()): ?>
+                                            <div class="stock available"><span><?php /* @escapeNotVerified */ echo __('In stock') ?></span></div>
+                                        <?php else: ?>
+                                            <div class="stock unavailable"><span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <?php if ($showDescription):?>
+                                <div class="product description product-item-description">
+                                    <?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description') ?>
+                                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" title="<?php /* @escapeNotVerified */ echo $_productNameStripped ?>"
+                                       class="action more"><?php /* @escapeNotVerified */ echo __('Learn More') ?></a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+    <?php echo $block->getToolbarHtml() ?>
+    <?php if (!$block->isRedirectToCartEnabled()) : ?>
+        <script type="text/x-magento-init">
+        {
+            "[data-role=tocart-form], .form.map.checkout": {
+                "catalogAddToCart": {}
+            }
+        }
+        </script>
+    <?php endif; ?>
+<?php endif; ?>

@@ -1,0 +1,18 @@
+<?php
+/**
+ * @var $block \Magento\CatalogSearch\Block\Advanced\Result
+ */
+
+$productList = $block->getProductListHtml();
+?>
+<?php if (!$block->getResultCount()): ?>
+    <div role="alert" class="message error">
+        <div>
+            <?= /* @escapeNotVerified */ __('We can\'t find any items matching these search criteria.') ?> <a href="<?= /* @escapeNotVerified */ $block->getFormUrl() ?>"><?= /* @escapeNotVerified */ __('Modify your search.') ?></a>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if ($block->getResultCount()): ?>
+    <div class="search results"><?= $productList ?></div>
+<?php endif; ?>
+<?php $block->getSearchCriterias(); ?>

@@ -1,0 +1,50 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<!-- ko foreach: getRegion('progressBar') -->
+<!-- ko template: getTemplate() --><!-- /ko -->
+<!--/ko-->
+
+<!-- ko foreach: getRegion('sidebar') -->
+<!-- ko template: getTemplate() --><!-- /ko -->
+<!--/ko-->
+
+<div class="promoBlock-wrapper" data-bind="mageInit: {'collapsible':{'openedState': 'active',  'active': true}}">
+    <div class="promo-title" data-bind="text: 'Promo Code & Gift Cards'" data-role="title"></div>
+    <div class="promoBlock" data-role="content">
+        <!-- ko foreach: getRegion('discount') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- /ko -->
+
+        <!-- ko foreach: getRegion('giftCardAccount') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- /ko -->
+    </div>
+</div>
+
+<!-- ko foreach: getRegion('authentication') -->
+<!-- ko template: getTemplate() --><!-- /ko -->
+<!--/ko-->
+
+<!-- ko foreach: getRegion('estimation') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+<!--/ko-->
+
+<!-- ko foreach: getRegion('messages') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+<!--/ko-->
+
+
+<div class="opc-wrapper">
+    <ol class="opc" id="checkoutSteps" data-bind="attr: {'class': 'opc ' + index }">
+    <!-- ko foreach: getRegion('steps') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+    </ol>
+
+</div>
+

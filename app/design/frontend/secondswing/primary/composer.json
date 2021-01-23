@@ -1,0 +1,12 @@
+{
+    "name": "2ndswing/theme-frontend-secondswing",
+    "description": "SecondSwing Theme",
+    "version": "0.0.2",
+    "license": "MIT",
+    "type": "magento2-theme",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ]
+    }
+}

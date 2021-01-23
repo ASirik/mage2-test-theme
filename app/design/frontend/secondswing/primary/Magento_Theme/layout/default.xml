@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+  <body>
+
+      <move element="page.main.title" destination="content" before="-" />
+    <referenceContainer name="compare-link-wrapper" display="false" />
+    <referenceContainer name="header.links" display="false" />
+    <referenceBlock name="store_switcher" display="false" />
+    <referenceBlock name="copyright" display="false" />
+    <referenceBlock name="footer_links" display="false" />
+    <referenceContainer name="cms_footer_links_container" display="false" />
+    <referenceBlock name="report.bugs" display="false" />
+    
+    <referenceBlock name="header.panel" remove="true" />
+    <move element="top.links" destination="header-wrapper" after="top.search"/>
+
+    <referenceContainer name="page.top">
+      <referenceBlock name="store.links" remove="true" />
+        <!--<referenceBlock name="catalog.topnav" remove="true" />-->
+    </referenceContainer>
+
+    <referenceBlock name="logo">
+      <arguments>
+          <argument name="logo_file" xsi:type="string">images/logo.png</argument>
+          <argument name="logo_img_width" xsi:type="number">125</argument>
+          <argument name="logo_img_height" xsi:type="number">33</argument>
+      </arguments>
+    </referenceBlock>
+
+
+    <referenceBlock name="top.links">
+      <arguments>
+          <argument name="template" xsi:type="string">Magento_Theme::top_links.phtml</argument>
+      </arguments>
+    </referenceBlock>
+
+    <move element="form.subscribe" destination="footer.top.left" />
+
+    <referenceContainer name="footer-container">
+        <container name="footer.wrapper" label="Footer Wrapper" htmlTag="div" htmlClass="footer content" after="-">
+          <container name="footer.top" label="Top Portion of Footer" htmlTag="div" htmlClass="footer-top row" after="-">
+              <container name="footer.top.left" label="Footer Top Left" htmlTag="div" htmlClass="col-md-6 col-xs-12" after="-"></container>
+
+                <container name="footer.top.right" label="Footer Top Right" htmlTag="div" htmlClass="col-md-6 col-xs-12" after="-">
+                    <block class="Magento\Framework\View\Element\Template" name="social" template="Magento_Theme::social.phtml"></block>
+                </container>   
+          </container>
+
+            <container name="footer.bottom" label="Bottom Portion of Footer" htmlTag="div" htmlClass="footer-bottom row" after="-">
+                <container name="footer.bottom.block_1" label="Footer Left Column 1" htmlTag="div" htmlClass="col-md-4 col-xs-12" after="-">
+                    <block class="Magento\Cms\Block\Block" name="footer_block_1">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">footer_block_1</argument>
+                        </arguments>
+                    </block>
+                </container>
+
+                <container name="footer.bottom.block_2" label="Footer Right Column 2" htmlTag="div" htmlClass="col-md-4 col-xs-12" after="-">
+                    <block class="Magento\Cms\Block\Block" name="footer_block_2">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">footer_block_2</argument>
+                        </arguments>
+                    </block>
+                </container>
+
+                <container name="footer.bottom.block_3" label="Footer Left Column 3" htmlTag="div" htmlClass="col-md-4 col-xs-12" after="-">
+                    <block class="Magento\Cms\Block\Block" name="footer_block_3">
+                        <arguments>
+                            <argument name="block_id" xsi:type="string">footer_block_3</argument>
+                        </arguments>
+                    </block>
+                </container>
+            </container>
+        </container>
+    </referenceContainer>
+    <!-- <referenceContainer name="main.content">
+          <block name="tradeinmodal.custom.block" class="SecondSwing\TradeIn\Block\Cart\TradeIn"  template="checkout/cart/tradein_modal.phtml" after="-" />
+      </referenceContainer> -->
+  </body>
+</page>

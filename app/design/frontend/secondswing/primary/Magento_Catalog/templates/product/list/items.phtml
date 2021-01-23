@@ -1,0 +1,386 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\Catalog\ViewModel\Product\Listing\PreparePostData;
+use Magento\Framework\App\ActionInterface;
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+// phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
+
+/* @var $block \Magento\Catalog\Block\Product\AbstractProduct */
+?>
+
+<?php
+switch ($type = $block->getType()) {
+
+    case 'related-rule':
+        if ($exist = $block->hasItems()) {
+            $type = 'related';
+            $class = $type;
+
+            $image = 'related_products_list';
+            $title = __('Related Products');
+            $items = $block->getAllItems();
+            $limit = $block->getPositionLimit();
+            $shuffle = (int) $block->isShuffled();
+            $canItemsAddToCart = $block->canItemsAddToCart();
+
+            $showAddTo = true;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+        }
+        break;
+
+    case 'related':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Related $block */
+        if ($exist = $block->getItems()->getSize()) {
+            $type = 'related';
+            $class = $type;
+
+            $image = 'related_products_list';
+            $title = __('Related Products');
+            $items = $block->getItems();
+            $limit = 0;
+            $shuffle = 0;
+            $canItemsAddToCart = $block->canItemsAddToCart();
+
+            $showAddTo = true;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+        }
+        break;
+
+    case 'upsell-rule':
+        if ($exist = $block->hasItems()) {
+            $type = 'upsell';
+            $class = $type;
+
+            $image = 'upsell_products_list';
+            $title = __('We found other products you might like!');
+            $items = $block->getAllItems();
+            $limit = $block->getPositionLimit();
+            $shuffle = (int) $block->isShuffled();
+
+            $showAddTo = false;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'upsell':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Upsell $block */
+        if ($exist = count($block->getItemCollection()->getItems())) {
+            $type = 'upsell';
+            $class = $type;
+
+            $image = 'upsell_products_list';
+            $title = __('We found other products you might like!');
+            $items = $block->getItemCollection()->getItems();
+            $limit = $block->getItemLimit('upsell');
+            $shuffle = 0;
+
+            $showAddTo = false;
+            $showCart = false;
+            $templateType = null;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'crosssell-rule':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Crosssell $block */
+        if ($exist = $block->hasItems()) {
+            $type = 'crosssell';
+            $class = $type;
+
+            $image = 'cart_cross_sell_products';
+            $title = __('You may also like:');
+            $items = $block->getItemCollection();
+
+            $showAddTo = true;
+            $showCart = true;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'crosssell':
+        /** @var \Magento\Catalog\Block\Product\ProductList\Crosssell $block */
+        if ($exist = count($block->getItems())) {
+            $type = 'crosssell';
+            $class = $type;
+
+            $image = 'cart_cross_sell_products';
+            $title = __('You may also like');
+            $items = $block->getItems();
+
+            $showAddTo = true;
+            $showCart = true;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $description = false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    case 'new':
+        if ($exist = $block->getProductCollection()) {
+            $type = 'new';
+            $mode = 'grid';
+            $type = $type . ' ' . $mode;
+
+            $class = 'widget' . ' ' . $type;
+
+            $image = 'new_products_content_widget_grid';
+            $title = __('New Products');
+            $items = $exist;
+
+            $showAddTo = true;
+            $showCart = true;
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $description = ($mode == 'list') ? true : false;
+            $canItemsAddToCart = false;
+        }
+        break;
+
+    default:
+        $exist = null;
+}
+//$_productItem = $block->getItems();
+$imageHelper = $this->helper('\SecondSwing\CatalogImages\Helper\ImageUrlHelper');
+//$productSku = $_productItem->getProduct()->getSku();
+$imageType = $imageHelper->getStandardSlug();
+
+//$productImageUrl = $imageType . $productSku . '.jpg' . $imageHelper->getDimensions('small');
+
+$_item = null;
+/** @var \SecondSwing\Catalog\Helper\ProductAttributeHelper $helper */
+$helper = $this->helper('SecondSwing\Catalog\Helper\ProductAttributeHelper');
+?>
+<!-- crosssell -->
+<?php if ($exist):?>
+
+<?php if ($type == 'related' || $type == 'upsell'):?>
+<?php if ($type == 'related'):?>
+<div class="block <?= $block->escapeHtmlAttr($class) ?>"
+     data-mage-init='{"relatedProducts":{"relatedCheckbox":".related.checkbox"}}'
+     data-limit="<?= $block->escapeHtmlAttr($limit) ?>" data-shuffle="<?= /* @noEscape */ $shuffle ?>">
+    <?php else:?>
+    <div class="block <?= $block->escapeHtmlAttr($class) ?> " data-mage-init='{"upsellProducts":{}}'
+         data-limit="<?= $block->escapeHtmlAttr($limit) ?>" data-shuffle="<?= /* @noEscape */ $shuffle ?>">
+        <?php endif; ?>
+        <?php else:?>
+        <div class="block <?= $block->escapeHtmlAttr($class) ?>">
+            <?php endif; ?>
+            <div class="block-title title">
+                <strong id="block-<?= $block->escapeHtmlAttr($class) ?>-heading" role="heading"
+                        aria-level="2"><?= $block->escapeHtml($title) ?></strong>
+            </div>
+            <div class="block-content content" aria-labelledby="block-<?= $block->escapeHtmlAttr($class) ?>-heading">
+                <?php if ($type == 'related' && $canItemsAddToCart):?>
+                    <div class="block-actions">
+                        <?= $block->escapeHtml(__('Check items to add to the cart or')) ?>
+                        <button type="button" class="action select"
+                                data-role="select-all"><span><?= $block->escapeHtml(__('select all')) ?></span></button>
+                    </div>
+                <?php endif; ?>
+                <div class="products wrapper grid products-grid products-<?= $block->escapeHtmlAttr($type) ?>">
+                    <ol class="products list items product-items owl-carousel">
+                        <?php foreach ($items as $_item):?>
+                            <?php $available = ''; ?>
+                            <?php if (!$_item->isComposite() && $_item->isSaleable() && $type == 'related'):?>
+                                <?php if (!$_item->getRequiredOptions()):?>
+                                    <?php $available = 'related-available'; ?>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php if ($type == 'related' || $type == 'upsell'):?>
+                                <li class="item product product-item" style="display: none;">
+                            <?php else:?>
+                                <li class="item product product-item">
+                            <?php endif; ?>
+                            <div class="product-item-info <?= /* @noEscape */ $available ?>">
+                                <?= /* @noEscape */ '<!-- ' . $image . '-->' ?>
+                                <a href="<?= $block->escapeUrl($block->getProductUrl($_item)) ?>"
+                                   class="product photo product-item-photo">
+                                    <img src="<?php echo $imageType . $_item->getSku() . '.jpg' . $imageHelper->getDimensions('small'); ?>" alt="<?php echo $_item->getName() ?>"/>
+                                </a>
+                                <div class="product details product-item-details">
+                                    <?php $brand = ucwords(strtolower(htmlentities($_item->getAttributeText('g2_brand')))); ?>
+<!--                                    --><?php //$_product = $_item->getProduct() ?>
+                                    <?php $subcategory = ucwords(strtolower(htmlentities($_item->getAttributeText('g2_subcategory')))); ?>
+                                    <?php  $itemCategory = $this->getLayer()
+                                        ? $this->getLayer()->getCurrentCategory()->getName()
+                                        : '';
+                                    $isIronSet = false;
+                                    $productCategoryAttribute = $_item->getResource()->getAttribute('g2_category');
+                                    if ($productCategoryAttribute->usesSource()) {
+                                        $optionId = $_item->getData('g2_category');
+                                        $productCategory = $productCategoryAttribute->getSource()->getOptionText($optionId);
+                                        if (strtolower($productCategory) == 'iron set' || is_int(strpos(strtolower($_item->getName()), 'iron set'))) {
+                                            $isIronSet = true;
+                                        }
+                                    }
+                                    $isEndOfLife = $_item->getData('g2_endoflife');
+                                    $hasNewVariants = $_item->getData('g2_hasnewvariants');
+                                    $hasANewPrice = $_item->getMinPrice() > 0;
+                                    $defaultIronsInSet = 1;
+                                    $_priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+                                    /** @var \SecondSwing\SearchBy\Helper\Data $searchHelper */
+                                    $searchHelper = $this->helper('SecondSwing\SearchBy\Helper\Data');
+                                    $clubsTextPlaceHolder = ' CLUBS';
+                                    $minPriceHtml = $_priceHelper->currency($_item->getMinPrice());
+                                    $instateMinPrice = $_item->getData('g2_min_instate_price');
+                                    $instateMaxPrice = $_item->getData('g2_max_instate_price');
+                                    $defaultCategoryCssclass = '';
+                                    if ($itemCategory == 'Default Category') {
+                                        $defaultCategory = true;
+                                        $defaultCategoryCssclass = ' default-category';
+                                    }
+                                    $siteCode = $searchHelper->getSiteCode();
+                                    $outofstateMinPrice = $_item->getData('g2_min_outofstate_price');
+                                    $outofstateMaxPrice = $_item->getData('g2_max_outofstate_price');
+
+                                    ?>
+                                    <div class="product-short-info">
+                                        <?php if ($brand): ?>
+                                            <div class="product-brand">
+                                                <?= $brand ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <strong class="product name product-item-name"><a
+                                                class="product-item-link"
+                                                title="<?= $block->escapeHtmlAttr($_item->getName()) ?>"
+                                                href="<?= $block->escapeUrl($block->getProductUrl($_item)) ?>">
+                                                <?= $block->escapeHtml($_item->getName()) ?></a>
+                                        </strong>
+
+                                        <?php if ($subcategory): ?>
+                                            <div class="product-subcategory">
+                                                <?= $subcategory ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if ($itemCategory !== 'Default Category'): ?>
+                                            <div class="product-category">
+                                                <?= (strpos($productCategory, 'Rangefinder') !== false) ? 'GPS & Rangefinders' : $itemCategory ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($helper->isProductNew($_item)):?>
+                                        <div class="tiles-product-wrapper-new">
+                                            <?php if (!$isEndOfLife || ($isEndOfLife && $hasNewVariants)): // dont show new price if g2_endoflife == 1 and hasNewVarints is false ?>
+                                                <?php if ($hasANewPrice): //hides all zero prices on new variants ?>
+                                                    <div class="product-rate-new">
+                                                        <div class="product-condition"><?php echo __('NEW'); ?> <?php if ($isIronSet) { echo $clubsTextPlaceHolder; } ?></div>
+                                                        <?php if (in_array($_item->getData('g2_price_display'), [\SecondSwing\ProductPrice\Helper\Data::NS_ADDTOCART, \SecondSwing\ProductPrice\Helper\Data::NS_CLICK,\SecondSwing\ProductPrice\Helper\Data::NS_CALL])): ?>
+                                                            <?php echo $block->getChildBlock('list_price')->setData('product', $_item)->toHtml(); ?>
+                                                        <?php else: ?>
+                                                            <?php if($isIronSet) : //if product is new ironset ?>
+                                                                <?= $_priceHelper->currency($defaultIronsInSet * $_item->getMinimalPrice()) ?>
+                                                            <?php else: // not ironset but new ?>
+                                                                <?= $_priceHelper->currency($_item->getMinimalPrice()) ?>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
+                                                        <?php $isShowingNew = true; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php $usedProductsNumber = $helper->getUsedProductsNumber($_item); ?>
+                                    <?php if ($usedProductsNumber > 0):?>
+                                    <?php if ($instateMinPrice > 1 && $instateMaxPrice > $instateMinPrice): // Used ?>
+
+                                    <div class="used-products product-info<?php echo $defaultCategoryCssclass; ?>">
+                                        <span class="used-products-label"><?php echo __('USED') ?>  </span>
+                                        <div class="product-price">
+                                            <?php if ($siteCode === 'in_region') : ?>
+                                                <?= $_priceHelper->currency($instateMinPrice) ?> - <?= $_priceHelper->currency($instateMaxPrice) ?>
+                                            <?php else: ?>
+                                                <?= $_priceHelper->currency($outofstateMinPrice) ?> - <?= $_priceHelper->currency($outofstateMaxPrice) ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php if($usedProductsNumber): ?>
+                                        <div class="used-products-count"><?= $usedProductsNumber ?> <?php echo __('Products') ?></div>
+                                    <?php endif; ?>
+                                    <?php else: // Used ?>
+
+                                    <div class="used-products product-info<?php echo $defaultCategoryCssclass; ?>">
+                                            <span class="used-products-label"><?php echo __('USED') ?>  </span>
+                                            <div class="product-price">
+                                                As low as:
+                                                <?php if ($siteCode === 'in_region') : ?>
+                                                    <?= $_priceHelper->currency($instateMinPrice) ?>
+                                                <?php else: ?>
+                                                    <?= $_priceHelper->currency($outofstateMinPrice) ?>
+                                                <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php if($usedProductsNumber): ?>
+                                        <div class="used-products-count"><?= $usedProductsNumber ?> <?php echo __('Products') ?></div>
+                                    <?php endif; ?>
+                                    <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            </li>
+                        <?php endforeach ?>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <?php if (!$block->isRedirectToCartEnabled() && $_item):?>
+            <script type="text/x-magento-init">
+            {
+                "[data-role=tocart-form], .form.map.checkout": {
+                    "catalogAddToCart": {
+                        "product_sku": "<?= $block->escapeJs($_item->getSku()) ?>"
+                    }
+                }
+            }
+            </script>
+        <?php endif;?>
+        <?php endif;?>
+        <script>
+            require([
+                'jquery',
+                'sliderowlcarousel',
+                'domReady!'
+            ], function ($) {
+                $(".crosssell .owl-carousel").owlCarousel({
+                    nav: true,
+                    dots: true,
+                    autoplay: false,
+                    margin: 20,
+                    items: 5,
+                    loop:true,
+                    responsiveClass:true,
+                    responsive:{
+                        0 : {
+                            items: 2
+                        },
+
+                        768 : {
+                            items: 2
+                        },
+
+                        992 : {
+                            items: 3
+                        },
+
+                        1200 : {
+                            items: 5
+                        }
+                    }
+                });
+            })
+        </script>

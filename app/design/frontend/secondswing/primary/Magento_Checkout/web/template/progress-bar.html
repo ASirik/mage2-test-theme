@@ -1,0 +1,24 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<div class="opc-progress-container">
+    <ul class="opc-progress-bar">
+        <!-- ko foreach: { data: steps().sort(sortItems), as: 'item' } -->
+            <li class="opc-progress-bar-item" data-bind="css: item.isVisible() ? '_active' : ($parent.isProcessed(item) ? '_complete' : '')">
+                <span data-bind="i18n: item.title, click: $parent.navigateTo"></span>
+            </li>
+        <!-- /ko -->
+        <li class="opc-progress-bar-item">
+            <span data-bind="i18n: 'Order Confirmation'"></span>
+        </li>
+    </ul>
+
+<!--    <div class="opc-action-container">-->
+<!--        <a data-bind="attr: { href: checkoutcartUrl }">View Cart</a>-->
+<!--        <a data-bind="attr: { href: baseUrl }">Continue Shopping</a>-->
+<!--    </div>-->
+</div>

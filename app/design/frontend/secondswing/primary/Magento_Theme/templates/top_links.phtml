@@ -1,0 +1,16 @@
+<?php
+$_customerAccount = '/oauthlogin/login/start/provider/keycloak/redirect/account';
+$_storeLocations = $this->getUrl('store-locations');
+?>
+<div id="top-header-links" class="top-header-links" data-mage-init='{"signedin":{}}'>
+    <div class="row">
+        <div class="col">
+            <div class="top-header-icons-wrapper">
+                <a id="customer-account-link" href="<?php echo $_customerAccount; ?>"><div class="fa fa-user not-signedin" aria-hidden="true"><span class="signin-customer-name disabled"></span></div></a>
+                <a href="<?php echo $_storeLocations; ?>"><div class="fa fa-map-marker" aria-hidden="true"></div></a>
+                <a href="tel:+1-612-331-3163"><div class="fa fa-phone" aria-hidden="true"></div></a>
+                <span id="extole_zone_test_cta" class="header-refer-a-friend-icon"></span>
+            </div>
+        </div>
+    </div>
+</div>

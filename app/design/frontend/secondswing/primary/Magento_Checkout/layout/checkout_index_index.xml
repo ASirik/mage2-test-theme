@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<body>
+    <referenceBlock name="catalog.compare.link" remove="true" />
+    <referenceContainer name="footer-container" remove="false"/>
+
+	<referenceContainer name="footer-container">
+        <container name="footer.wrapper" label="Footer Wrapper" htmlTag="div" htmlClass="footer content checkout-footer" after="-">
+          <container name="footer.top" label="Top Portion of Footer" htmlTag="div" htmlClass="footer-top row" after="-">
+                <container htmlTag="div" htmlClass="col-md-4 col-xs-12" after="-">
+                    <block class="Magento\Framework\View\Element\Template" name="help" template="Magento_Checkout::help.phtml"></block>
+                </container>
+                <container htmlTag="div" htmlClass="col-md-4 col-xs-12" after="-">
+                	<block class="Magento\Framework\View\Element\Template" name="customerservice" template="Magento_Checkout::customerservice.phtml"></block>
+                </container>
+
+                <container htmlTag="div" htmlClass="col-md-4 col-xs-12" after="-">
+                	<block class="Magento\Framework\View\Element\Template" name="paymentmethods" template="Magento_Checkout::paymentmethods.phtml"></block>
+                </container>
+          </container>
+
+          <container name="footer.bottom" label="Bottom Portion of Footer" htmlTag="div" htmlClass="footer-bottom row" after="-">
+	            <container after="-">
+	                <block class="Magento\Framework\View\Element\Template" name="copyrights" template="Magento_Checkout::copyrights.phtml"></block>
+	            </container>
+          </container>
+
+        </container>
+    </referenceContainer>
+
+    <referenceBlock name="checkout.root">
+        <arguments>
+            <argument name="jsLayout" xsi:type="array">
+                <item name="components" xsi:type="array">
+                    <item name="checkout" xsi:type="array">
+                        <item name="children" xsi:type="array">
+                            <item name="sidebar" xsi:type="array">
+                                <item name="children" xsi:type="array">
+                                    <item name="summary" xsi:type="array">
+                                        <item name="children" xsi:type="array">
+                                            <item name="totals" xsi:type="array">
+                                                <item name="sortOrder" xsi:type="string">99</item>
+                                            </item>
+                                            <item name="cart_items" xsi:type="array">
+                                                <item name="sortOrder" xsi:type="string">0</item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                            <item name="giftCardAccount" xsi:type="array">
+                                <item name="component"  xsi:type="string">Magento_GiftCardAccount/js/view/payment/gift-card-account</item>
+                                <item name="displayArea" xsi:type="string">giftCardAccount</item>
+                                <item name="sortOrder" xsi:type="string">1</item>
+                                <item name="children" xsi:type="array">
+                                    <item name="errors" xsi:type="array">
+                                        <item name="sortOrder" xsi:type="string">1</item>
+                                        <item name="component" xsi:type="string">Magento_GiftCardAccount/js/view/payment/gift-card-messages</item>
+                                        <item name="displayArea" xsi:type="string">messages</item>
+                                    </item>
+                                </item>
+                            </item>
+
+                            <item name="discount" xsi:type="array">
+                                <item name="component" xsi:type="string">Magento_SalesRule/js/view/payment/discount</item>
+                                <item name="displayArea" xsi:type="string">discount</item>
+                                <item name="sortOrder" xsi:type="string">1</item>
+                                <item name="children" xsi:type="array">
+                                    <item name="errors" xsi:type="array">
+                                        <item name="sortOrder" xsi:type="string">0</item>
+                                        <item name="component" xsi:type="string">Magento_SalesRule/js/view/payment/discount-messages</item>
+                                        <item name="displayArea" xsi:type="string">messages</item>
+                                    </item>
+                                </item>
+                            </item>
+
+                            <item name="steps" xsi:type="array">
+                                <item name="children" xsi:type="array">
+                                    <item name="shipping-step" xsi:type="array">
+                                        <item name="component" xsi:type="string">uiComponent</item>
+                                        <item name="sortOrder" xsi:type="string">1</item>
+                                        <item name="children" xsi:type="array">
+                                            <item name="step-config" xsi:type="array">
+                                                <item name="component" xsi:type="string">uiComponent</item>
+                                                <item name="children" xsi:type="array">
+                                                    <item name="shipping-rates-validation" xsi:type="array">
+                                                        <item name="children" xsi:type="array">
+                                                            <!--Step configuration components-->
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                            <item name="shippingAddress" xsi:type="array">
+                                                <item name="config" xsi:type="array">
+                                                    <item name="deps" xsi:type="array">
+                                                        <item name="0" xsi:type="string">checkout.steps.shipping-step.step-config</item>
+                                                        <item name="1" xsi:type="string">checkoutProvider</item>
+                                                    </item>
+                                                    <item name="popUpForm" xsi:type="array">
+                                                        <item name="element" xsi:type="string">#opc-new-shipping-address</item>
+                                                        <item name="options" xsi:type="array">
+                                                            <item name="type" xsi:type="string">popup</item>
+                                                            <item name="responsive" xsi:type="boolean">true</item>
+                                                            <item name="innerScroll" xsi:type="boolean">true</item>
+                                                            <item name="title" xsi:type="string" translate="true">Add New Address</item>
+                                                            <item name="trigger" xsi:type="string">opc-new-shipping-address</item>
+                                                            <item name="buttons" xsi:type="array">
+                                                                <item name="save" xsi:type="array">
+                                                                    <item name="text" xsi:type="string" translate="true">Save New Address</item>
+                                                                    <item name="class" xsi:type="string">action primary action-save-address</item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                    <item name="billing-step" xsi:type="array">
+                                        <item name="children" xsi:type="array">
+                                            <item name="payment" xsi:type="array">
+                                                <item name="children" xsi:type="array">
+                                                    <item name="afterMethods" xsi:type="array">
+                                                        <item name="config" xsi:type="array">
+                                                            <item name="componentDisabled" xsi:type="boolean">true</item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </referenceBlock>
+
+</body>
+</page>

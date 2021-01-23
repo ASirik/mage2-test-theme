@@ -1,0 +1,15 @@
+<page
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+	    <remove src="bootstrap/js/bootstrap.min.js" />
+	    <remove src="Ves_Megamenu::css/bootstrap-tiny.css" />
+	    <remove src="Ves_All::lib/bootstrap/css/bootstrap-tiny.css" />
+        <remove src="fonts/opensans/light/opensans-300.woff2"/>
+        <remove src="fonts/opensans/regular/opensans-400.woff2"/>
+        <remove src="fonts/opensans/semibold/opensans-600.woff2"/>
+        <remove src="fonts/opensans/bold/opensans-700.woff2"/>
+        <remove src="fonts/Luma-Icons.woff2"/>
+        <remove src="mage/calendar.css"/>
+    </head>
+</page>

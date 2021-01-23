@@ -1,0 +1,59 @@
+<div class="payment-option opc-payment-additional giftcardaccount "
+     id="giftcardaccount-placer">
+    <div class="payment-option-content" data-role="content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <form class="form form-giftcard-account" id="giftcard-form" method="post" data-bind="blockLoader: isLoading">
+            <div class="payment-option-inner">
+                <div class="field">
+                    <label class="label" for="giftcard-code">
+                        <span data-bind="i18n: 'Gift Cards'"></span>
+                    </label>
+                    <div class="cart-giftcard-link">
+                        <a href="/">
+                            <!-- ko i18n: 'More Details >'--><!-- /ko -->
+                        </a>
+                    </div>
+                    <div class="control">
+                        <input class="input-text"
+                               type="text"
+                               id="giftcard-code"
+                               name="giftcard_code"
+                               data-validate="{'required-entry':true}"
+                               data-bind="value: giftCartCode, attr:{placeholder: $t('Enter Gift Card Code')} "/>
+                    </div>
+                    <button class="action action-check" type="button" data-bind="'value': $t('See Balance'), click: checkBalance">
+                        <span><!-- ko i18n: 'Check Gift Card Status and Balance'--><!-- /ko --></span>
+                    </button>
+                </div>
+                <!-- ko if: giftCardAccount.isChecked-->
+                    <!-- ko if: giftCardAccount.isValid-->
+                    <div class="giftcard-account-info">
+                        <div class="giftcard-account-number">
+                            <!-- ko i18n: 'Gift Card:'--><!-- /ko -->
+                            <span class="giftcard-number">
+                                <!-- ko i18n: giftCardAccount.code--><!-- /ko -->
+                            </span>
+                        </div>
+
+                        <div class="giftcard-account-balance">
+                            <!-- ko i18n: 'Current Balance: '--><!-- /ko -->
+                            <span class="price">
+                                 <!-- ko text: getAmount(giftCardAccount.amount())--><!-- /ko -->
+                            </span>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                <!-- /ko -->
+            </div>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button class="action action-add" type="submit" data-bind="'value': $t('Apply'), click: setGiftCard">
+                        <span><!-- ko i18n: 'Apply'--><!-- /ko --></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

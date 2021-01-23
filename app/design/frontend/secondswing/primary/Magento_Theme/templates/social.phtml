@@ -1,0 +1,8 @@
+<div class="social-contact block">
+    <div class="title"><?php echo __('Connect with us'); ?></div>
+    <?php $social_links = $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('social_links')->toHtml();
+    	  if($social_links):
+    	  		echo $social_links;
+    	  endif;		
+    ?>	
+</div>

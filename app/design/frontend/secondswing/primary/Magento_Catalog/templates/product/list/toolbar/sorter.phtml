@@ -1,0 +1,33 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Toolbar
+ */
+use Magento\Catalog\Model\Product\ProductList\Toolbar;
+$sortBy = $block->getRequest()->getParam('product_list_order', '');
+if (!in_array($sortBy, ['position', 'create_desc', 'create_asc', 'price_desc', 'price_asc'])) {
+    //$sortBy = 'create_desc'; // for g2_yearrelease
+    $sortBy = 'position';
+}
+?>
+
+<div class="toolbar-sorter sorter">
+    <label class="sorter-label" for="sorter">Sort By</label>
+    <select id="sorter" data-role="sorter" class="sorter-options">
+        <option value="position" <?php if($sortBy == "position") echo "selected=selected" ;?>>Relevance</option>
+        <option value="create_desc" <?php if($sortBy == "create_desc") echo "selected=selected" ;?>>Newest Released</option>
+        <option value="create_asc" <?php if($sortBy == "create_asc") echo "selected=selected" ;?>>Oldest Released</option>
+        <option value="price_desc" <?php if($sortBy == "price_desc") echo "selected=selected" ;?>>Highest Price</option>
+        <option value="price_asc" <?php if($sortBy == "price_asc") echo "selected=selected" ;?>>Lowest Price</option>
+    </select>
+</div>

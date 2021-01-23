@@ -1,0 +1,392 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Variables
+//  _____________________________________________
+
+@block-auth__dropdown__padding: @indent__m;
+@block-auth__dropdown__background-color: @color-white;
+@block-auth__or-label__size: 36px;
+@block-auth__width: 0;
+@block-auth__border: 1px solid @color-gray-light3;
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .authentication-dropdown {
+        box-sizing: border-box;
+
+        .modal-inner-wrap {
+            padding: @block-auth__dropdown__padding;
+        }
+    }
+
+    .authentication-wrapper {
+        padding: 20px 20px 10px 20px;
+        border: 1px solid @border-color__base;
+        border-bottom: 3px solid @border-color__base;
+        position: relative;
+        z-index: 1;
+        margin-top: 20px;
+        width: 100%;
+
+        .block-title {
+            cursor: pointer;
+            position: relative;
+
+            .lib-icon-font(
+                @icon-up,
+                @_icon-font-size: 12px,
+                @_icon-font-line-height: 20px,
+                @_icon-font-text-hide: true,
+                @_icon-font-position: after
+            );
+
+            &:after {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            display: flex;
+        }
+
+        .block-authentication{
+            &.active {
+                .block-content {
+                    display: block;
+                }
+
+                .block-title {
+                    cursor: pointer;
+                    position: relative;
+                    .lib-icon-font(
+                        @icon-down,
+                        @_icon-font-size: 12px,
+                        @_icon-font-line-height: 20px,
+                        @_icon-font-text-hide: true,
+                        @_icon-font-position: after
+                    );
+                    display: flex;
+
+                    &:after {
+                        font-size: 20px;
+                        font-weight: bold;
+                        margin-top: 4px;
+                    }
+                }
+
+            }
+
+
+        }
+
+
+        ._has-auth-shown & {
+            z-index: @modal__z-index;
+        }
+
+        .block-title {
+            position: relative;
+            padding-left: 30px;
+            display: flex;
+
+            div {
+                font-size: 16px;
+                font-family: @font-family__riftsoft-bold;
+                font-weight: 700;
+                color: @mainRed;
+                display: inline-block;
+            }
+
+            .left-subtitle {
+                margin-right: auto;
+                padding-left: 10px;
+            }
+
+            .right-subtitle {
+                margin-left: auto;
+                padding-right: 10px;
+            }
+
+            &:before {
+                background: url('@{baseDir}images/login-icon.jpg') no-repeat center left;
+                content: '';
+                width: 30px;
+                height: 30px;
+                display: inline-block;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+
+        .primary {
+            width: 100%;
+
+            button.action {
+                background: @color-black;
+                text-transform: uppercase;
+                font-size: 12px;
+                font-family: @font-family__urwdin-bold;
+                font-weight: bold;
+                width: 100%;
+                color: @color-white;
+            }
+
+            .action-remind {
+                font-size: 12px;
+                color: @color-black;
+                margin-top: 24px;
+            }
+        }
+    }
+
+    .action-auth-toggle {
+        &:extend(.abs-action-button-as-link all);
+    }
+
+    .block-authentication {
+        .block-title {
+            .lib-font-size(@h3__font-size);
+            border-bottom: 0;
+            margin-bottom: @indent__m;
+
+            strong {
+                font-weight: @font-weight__light;
+            }
+        }
+
+        .field {
+            .label {
+                font-weight: 600;
+                width: 100%;
+                color: @color-black;
+            }
+        }
+
+        .actions-toolbar {
+            margin-bottom: @indent__xs;
+
+            > .secondary {
+                padding-top: @indent__m;
+                text-align: left;
+            }
+
+            .primary {
+                .block-content {
+                    label.label {
+                        float: left;
+                        width: 100%;
+                        text-align: left;
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: @color-black;
+                    }
+                }
+            }
+        }
+
+        .action.action-register,
+        .action.action-login {
+            &:extend(.abs-button-l all);
+        }
+
+        .block[class] {
+            margin: 0;
+
+            ul {
+                list-style: none;
+                padding-left: @indent__s;
+            }
+
+            .field {
+                .control,
+                .label {
+
+                }
+            }
+
+            & + .block {
+                border-top: 1px solid @color-gray-light5;
+                margin-top: @indent__xl;
+                padding-top: @indent__xl;
+                position: relative;
+
+                &:before {
+                    .lib-css(height, @block-auth__or-label__size);
+                    .lib-css(line-height, @block-auth__or-label__size - 2px);
+                    .lib-css(margin, -(@block-auth__or-label__size/2 + 1px) 0 0 -(@block-auth__or-label__size / 2));
+                    .lib-css(min-width, @block-auth__or-label__size);
+                    background: @color-white;
+                    border: 1px solid @color-gray-light5;
+                    border-radius: 50%;
+                    box-sizing: border-box;
+                    color: @color-gray-light5;
+                    content: attr(data-label);
+                    display: inline-block;
+                    left: 50%;
+                    letter-spacing: normal;
+                    padding: 0 .2rem;
+                    position: absolute;
+                    text-align: center;
+                    text-transform: uppercase;
+                    top: 0;
+                }
+            }
+        }
+    }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .authentication-dropdown {
+        .lib-css(background-color, @block-auth__dropdown__background-color);
+        .lib-css(border, @block-auth__border);
+        -webkit-transform: scale(1,0);
+        -webkit-transform-origin: 0 0;
+        -webkit-transition: -webkit-transform linear .1s, visibility 0s linear .1s;
+        position: absolute;
+        text-align: left;
+        top: 100%;
+        transform: scale(1,0);
+        transform-origin: 0 0;
+        transition: transform linear .1s, visibility 0s linear .1s;
+        visibility: hidden;
+        width: 100%;
+
+        &._show {
+            .lib-css(z-index, @dropdown-list__z-index);
+            -webkit-transform: scale(1,1);
+            -webkit-transition: -webkit-transform linear .1s, visibility 0s linear 0s;
+            transform: scale(1,1);
+            transition: transform linear .1s, visibility 0s linear 0s;
+            visibility: visible;
+        }
+    }
+
+    .authentication-wrapper {
+        text-align: right;
+        max-width: 835px;
+        float: left;
+        width: 100%;
+        display: inline-block;
+        background: @color-white-smoke;
+
+        .block-title {
+            div {
+                font-size: 20px;
+                color: @color-black;
+            }
+        }
+
+        .block-content {
+            form {
+                width: 100%;
+                display: flex;
+
+                .fieldset {
+                    width: 100%;
+                    display: flex;
+                    flex: 65%;
+                    padding-left: 22px;
+                    margin-left: auto;
+
+                    .field {
+                        flex: 50%;
+                        max-width: 265px;
+                    }
+
+                    .field-email {
+                        margin-left: 16px;
+                        margin-right: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    .block-authentication {
+        .block-title {
+            .lib-font-size(@h2__font-size);
+            border-bottom: 0;
+            margin-bottom: @indent__m;
+        }
+
+        .actions-toolbar {
+            flex: 22.5%;
+            > .primary {
+                display: inline;
+                float: right;
+                margin-right: 0;
+                margin-top: 27px;
+                .action {
+                    margin-right: 0;
+                }
+
+                button {
+                    padding: 11px 0 10px 0;
+                }
+            }
+
+            > .secondary {
+                float: left;
+                margin-right: 2rem;
+                padding-top: 1rem;
+            }
+        }
+    }
+
+    .popup-authentication {
+        .modal-inner-wrap {
+            min-width: @screen__m;
+            width: 60%;
+        }
+
+        .block-authentication {
+            .lib-vendor-prefix-display(flex);
+            .lib-vendor-prefix-flex-direction(row);
+            border-top: 1px solid @color-gray-light5;
+        }
+
+        .block[class],
+        .form-login,
+        .fieldset,
+        .block-content {
+            .lib-vendor-prefix-display(flex);
+            .lib-vendor-prefix-flex-direction(column);
+            .lib-vendor-prefix-flex-grow(1);
+        }
+
+        .block[class] {
+            box-sizing: border-box;
+            float: left;
+            padding: @indent__s @indent__l 0 0;
+            width: 50%;
+
+            & + .block {
+                border-left: 1px solid @color-gray-light5;
+                border-top: 0;
+                margin: 0;
+                padding: @indent__s 0 0 @indent__xl;
+
+                &:before {
+                    left: 0;
+                    top: 50%;
+                }
+            }
+        }
+
+        .actions-toolbar {
+            margin-bottom: 0;
+            margin-top: auto;
+        }
+    }
+}

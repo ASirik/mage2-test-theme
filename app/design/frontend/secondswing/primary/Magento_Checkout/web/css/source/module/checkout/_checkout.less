@@ -1,0 +1,277 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Variables
+//  _____________________________________________
+
+@import 'fields/_file-uploader.less';
+
+@checkout-wrapper__margin: @indent__base;
+@checkout-wrapper__columns: 16;
+
+@checkout-step-title__border: @border-width__base solid @color-gray80;
+@checkout-step-title__font-size: 26px;
+@checkout-step-title__font-weight: @font-weight__light;
+@checkout-step-title__padding: @indent__s;
+
+@checkout-step-title-mobile__font-size: 18px;
+
+@checkout-step-content-mobile__background: @color-gray-light01;
+@checkout-step-content-mobile__margin-s: 15px;
+@checkout-step-content-mobile__margin: @indent__base -(@checkout-step-content-mobile__margin-s) @checkout-step-content-mobile__margin-s;
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+
+    .checkout-index-index {
+        .page-title-wrapper {
+            &:extend(.abs-visually-hidden all);
+        }
+
+        .opc-estimated-wrapper {
+            display: none;
+        }
+
+        .fieldset > .field.required > .label{
+            text-align: left;
+
+            &:after {
+                color: @color-black;
+            }
+        }
+
+        .page-header {
+            height: 74px;
+            border-bottom: 1px solid @border-color__base;
+            margin-bottom: 30px;
+        }
+
+        .guest-checkout {
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            width: 70.8%;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            display: inline-block;
+
+            div {
+                &:after,
+                &:before {
+                    position: absolute;
+                    top: 36%;
+                    width: 50%;
+                    height: 1px;
+                    content: "\A0";
+                    background-color: @border-color__base;
+                    z-index: -1;
+                }
+
+                &:after {
+                    margin-left: 2%;
+                    text-align: right;
+                }
+
+                &:before {
+                    left: auto;
+                    margin-left: -52%;
+                    text-align: right;
+                }
+
+                span {
+                    background: @color-white;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                }
+            }
+        }
+
+        .fieldset > .field._required > .label:after {
+            color: @color-black;
+        }
+    }
+
+    .checkout-container {
+        &:extend(.abs-add-clearfix all);
+        .lib-css(margin, 0 0 @checkout-wrapper__margin);
+    }
+
+    .opc-wrapper {
+        .lib-css(margin, 0 0 @checkout-wrapper__margin);
+
+        .opc {
+            &:extend(.abs-reset-list all);
+        }
+
+        .step-title {
+            &:extend(.abs-checkout-title all);
+            margin-bottom: 15px;
+            font-family: @font-family__riftsoft-bold;
+            font-size: 24px;
+            line-height: 31px;
+            text-transform: uppercase;
+        }
+
+        .step-content {
+            margin: 0 0 @indent__xl;
+        }
+    }
+
+    .checkout-index-index {
+
+        .logo {
+            margin-left: 0;
+        }
+
+        input {
+            height: 45px;
+        }
+    }
+
+    .checkout-onepage-success {
+        &:extend(.abs-add-clearfix all);
+
+        .print {
+            display: none;
+        }
+    }
+
+    .abs-discount-code {
+        .form-discount {
+            display: table;
+            width: 100%;
+
+            .actions-toolbar {
+                display: table-cell;
+                vertical-align: top;
+                width: 1%;
+
+                .primary {
+                    float: left;
+                    .action {
+                        &:extend(.abs-revert-to-action-secondary all);
+                        border-bottom-left-radius: 0;
+                        border-top-left-radius: 0;
+                        margin: 0 0 0 -2px;
+                        white-space: nowrap;
+                        width: auto;
+                    }
+                }
+            }
+
+            > .field {
+                > .label {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
+    .opc-wrapper {
+        .step-title {
+            .lib-css(font-size, @checkout-step-title-mobile__font-size);
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-content {
+            .lib-css(margin, 0 0 @checkout-step-content-mobile__margin-s);
+        }
+    }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+
+    .checkout-index-index {
+        .page-header {
+            .customer-account-link,
+            .header-refer-a-friend-icon {
+                display: none !important;
+            }
+        }
+
+        .checkout-container {
+            display: flex;
+            flex-wrap: wrap;
+
+            .opc-sidebar {
+                order: 10;
+            }
+        }
+
+        .guest-checkout {
+            width: 100%;
+        }
+
+        .opc-block-summary {
+            .title {
+                font-weight: bold;
+            }
+        }
+    }
+}
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+
+    .checkout-index-index {
+        .page-header {
+            height: 94px;
+            padding-top: 10px;
+
+            .block-search {
+                display: none;
+            }
+        }
+
+        .nav-sections,
+        .nav-toggle {
+            display: none;
+        }
+
+        .guest-checkout {
+            margin-top: 40px;
+            margin-bottom: 40px;
+
+            .subtitle {
+                font-size: 16px;
+            }
+        }
+
+        .top-header-links {
+            display: none !important;
+        }
+    }
+
+    .opc-wrapper {
+        &:extend(.abs-add-box-sizing-desktop-m all);
+        max-width: 877px;
+        padding-right: @indent__l;
+
+        .step-title {
+            font-size: 36px;
+        }
+    }
+
+    .checkout-onepage-success {
+        .print {
+            display: block;
+            float: right;
+            margin: 23px 0 0;
+        }
+    }
+}

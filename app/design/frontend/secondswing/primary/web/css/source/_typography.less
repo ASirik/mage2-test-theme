@@ -1,0 +1,46 @@
+// /**
+//  * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .lib-font-face(
+        @family-name: 'urwdin-bold',
+        @font-path: '@{baseDir}fonts/urwdin/bold/URWDIN-Bold',
+        @font-weight: 800,
+        @font-style: bold
+    );
+
+    .lib-font-face(
+        @family-name: 'urwdin-regular',
+        @font-path: '@{baseDir}fonts/urwdin/bold/URWDIN-Regular',
+        @font-weight: normal,
+        @font-style: normal
+    );
+}
+
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    h1 {
+        .lib-css(font-size, @h1__font-size-desktop);
+        .lib-css(margin-bottom, @h1__margin-bottom__desktop);
+    }
+}
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .items {
+        .lib-list-reset-styles();
+    }
+}

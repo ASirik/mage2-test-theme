@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="category.image" remove="true"/>
+        <referenceBlock name="category.description" remove="true" />
+<!--        <move element="page.main.title" destination="content" before="category.products"/>-->
+
+        <referenceContainer name="sidebar.additional">
+            <block class="SecondSwing\Headerbanner\Block\LHSbanner" name="club_finder_banner" template="SecondSwing_Headerbanner::club_finder_banner.phtml"  />
+            <block class="SecondSwing\Headerbanner\Block\LHSbanner" name="play_guarantee_banner" template="SecondSwing_Headerbanner::play_guarantee_banner.phtml" />
+        </referenceContainer>
+
+    </body>
+</page>

@@ -1,0 +1,65 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Magento\Theme\Block\Html\Header\Logo $block
+ */
+?>
+
+<div class="header-logo">
+<?php $storeName = $block->getThemeName() ? $block->getThemeName() : $block->getLogoAlt();?>
+<span data-action="toggle-nav" class="action nav-toggle">
+	<span><?= /* @escapeNotVerified */ __('Toggle Nav') ?></span>
+</span>
+
+
+<?php if ($block->getRequest()->getFullActionName() == 'cms_index_index') : ?>
+    <strong class="logo">
+<?php else: ?>
+    <a class="logo" href="<?= $block->getUrl('') ?>" title="<?= /* @escapeNotVerified */ $storeName ?>">
+<?php endif ?>
+        <img src="<?= /* @escapeNotVerified */ $block->getLogoSrc() ?>"
+             alt="2nd Swing New and Used Golf Clubs"
+             width="125"
+             height="33"
+        />
+<?php if ($block->getRequest()->getFullActionName() == 'cms_index_index') : ?>
+    </strong>
+<?php else:?>
+    </a>
+<?php endif?>
+</div>
+
+<script>
+require(['jquery'], function($) {
+    var searchLabel = $('#search_mini_form .label');
+
+    searchLabel.on('click', function(event) {
+        event.preventDefault();
+        searchLabel.toggleClass('active');
+    });
+
+
+    $(document).on("click", ".action.close-menu", function () {
+        if ($('html').hasClass('nav-open')) {
+            $('html').removeClass('nav-open');
+            setTimeout(function () {
+                $('html').removeClass('nav-before-open');
+            }, 300);
+        } else {
+            $('html').addClass('nav-before-open');
+            setTimeout(function () {
+                $('html').addClass('nav-open');
+            }, 42);
+        }
+    });
+
+    $(".section-items").append('<span data-action="toggle-nav" class="action close-menu"><span>Close</span></span>');
+
+});
+</script>

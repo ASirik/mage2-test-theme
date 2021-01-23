@@ -1,0 +1,47 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Variables
+//  _____________________________________________
+
+@checkout-sidebar__margin: @indent__base;
+@checkout-sidebar__margin__xl: 46px;
+@checkout-sidebar__columns: 4;
+
+& when (@media-common = true) {
+    .opc-sidebar {
+        width: 100%;
+
+        .product-item-inner {
+            .product-item-name {
+                margin-bottom: 20px;
+            }
+
+            .subtotal {
+                margin-top: 16px;
+            }
+        }
+
+        .block.items-in-cart {
+            margin-bottom: 0;
+        }
+
+        .opc-block-summary .minicart-items-wrapper {
+            max-height: 340px;
+        }
+    }
+}
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .opc-sidebar {
+        .lib-css(margin,0 0 @checkout-sidebar__margin);
+        .lib-layout-column(2, 2, @checkout-sidebar__columns);
+        width: 25.5%;
+    }
+}

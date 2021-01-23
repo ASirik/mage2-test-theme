@@ -1,0 +1,73 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="authentication-wrapper" data-block="authentication" data-bind="visible: isActive()">
+    <div class="block-authentication" data-bind="mageInit: {'collapsible':{'openedState': 'active',  'active': false}}">
+        <!-- ko foreach: getRegion('before') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- /ko -->
+        <div class="block-title toggle" id="block-login-heading" data-role="title">
+            <div class="left-subtitle" data-bind="i18n: 'Already have an account?'"></div>
+            <div class="right-subtitle" data-bind="i18n: 'Login now'"></div>
+        </div>
+        <div class="block block-customer-login" data-role="content">
+
+            <!-- ko foreach: getRegion('messages') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+            <div class="block-content content" id="block-login" >
+                <form data-role="login"
+                      data-bind="submit:login"
+                      method="post">
+                    <div class="fieldset"
+                         data-bind="attr: {'data-hasrequired': $t('* Required Fields')}">
+                        <div class="field field-email required">
+                            <label class="label" for="login-email"><span data-bind="i18n: 'Email'"></span></label>
+                            <div class="control">
+                                <input type="email"
+                                       class="input-text"
+                                       id="login-email"
+                                       name="username"
+                                       data-bind="attr: {autocomplete: autocomplete}"
+                                       data-validate="{required:true, 'validate-email':true}" />
+                            </div>
+                        </div>
+                        <div class="field field-password required">
+                            <label for="login-password" class="label"><span data-bind="i18n: 'Password'"></span></label>
+                            <div class="control">
+                                <input type="password"
+                                       class="input-text"
+                                       id="login-password"
+                                       name="password"
+                                       data-bind="attr: {autocomplete: autocomplete}"
+                                       data-validate="{required:true}"
+                                       autocomplete="off"/>
+                            </div>
+                        </div>
+                        <!-- ko foreach: getRegion('additional-login-form-fields') -->
+                        <!-- ko template: getTemplate() --><!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                    <div class="actions-toolbar">
+                        <input name="context" type="hidden" value="checkout" />
+                        <div class="primary">
+                            <button type="submit" class="action action-login secondary"><span data-bind="i18n: 'Login'"></span></button>
+                            <a class="action action-remind" data-bind="attr: { href: forgotPasswordUrl }">
+                                <span data-bind="i18n: 'Forgot Password?'"></span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="guest-checkout" data-bind="visible: isActive()">
+    <div>
+        <span class="subtitle" data-bind="i18n: 'Guest Checkout'"></span>
+    </div>
+</div>
