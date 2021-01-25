@@ -10,11 +10,6 @@
                     <label class="label" for="giftcard-code">
                         <span data-bind="i18n: 'Gift Cards'"></span>
                     </label>
-                    <div class="cart-giftcard-link">
-                        <a href="/">
-                            <!-- ko i18n: 'More Details >'--><!-- /ko -->
-                        </a>
-                    </div>
                     <div class="control">
                         <input class="input-text"
                                type="text"
@@ -49,6 +44,12 @@
             </div>
             <div class="actions-toolbar">
                 <div class="primary">
+                    <div class="cart-giftcard-link">
+                        <a href="/">
+                            <!-- ko i18n: 'More Details >'--><!-- /ko -->
+                            <span class="sign"> > </span>
+                        </a>
+                    </div>
                     <button class="action action-add" type="submit" data-bind="'value': $t('Apply'), click: setGiftCard">
                         <span><!-- ko i18n: 'Apply'--><!-- /ko --></span>
                     </button>

@@ -16,6 +16,9 @@
 & when (@media-common = true) {
     .checkout-index-index {
         .modal-popup {
+            .modal-title {
+                font-weight: bold;
+            }
             .field-tooltip {
                 .field-tooltip-content {
                     &:extend(.abs-checkout-tooltip-content-position-top all);
@@ -25,7 +28,7 @@
             .fieldset {
                 .field {
                     .label {
-                        font-weight: @font-weight__regular;
+                        font-weight: 600;
                     }
                 }
             }
@@ -86,7 +89,6 @@
         .modal-popup {
             .modal-inner-wrap {
                 .lib-css(margin-left, -(@checkout-modal-popup__width/2));
-                .lib-css(width, @checkout-modal-popup__width);
                 left: 50%;
             }
         }

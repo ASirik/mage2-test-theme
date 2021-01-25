@@ -43,7 +43,6 @@
         }
 
         .promoBlock {
-            display: flex;
             .payment-option {
                 display: flex;
             }
@@ -64,20 +63,53 @@
                     font-family: @font-family-name__base;
                     font-weight: normal;
                     box-shadow: none;
+                    margin-top: 16px;
+                    text-align: left;
+                    position: absolute;
                 }
 
                 .payment-option-inner {
                     margin-left: auto;
                 }
 
+                .primary {
+                    position: relative;
+                }
+
                 .cart-giftcard-link {
                     padding-top: 3px;
                     padding-right: 2px;
                     float: right;
+                    position: absolute;
+                    top: -32px;
+                    font-size: 12px;
 
-                        a {
-                            color: @color-black;
+                    a {
+                        color: @color-black;
+                    }
+
+                    .icon-next {
+                        position: absolute;
+                        top: 3px;
+                        right: -20px;
+
+                        &:after {
+                            &:extend(.abs-icon all);
+                            -webkit-font-smoothing: antialiased;
+                            font-size: 12px;
+                            line-height: inherit;
+                            color: inherit;
+                            font-family: 'luma-icons';
+                            vertical-align: middle;
+                            overflow: hidden;
+                            speak: none;
+                            text-align: center;
+                            content: '\e608';
+                            margin: 0 auto;
+                            display: block;
+                            font-weight: bold;
                         }
+                    }
                 }
             }
 
@@ -114,16 +146,14 @@
                     color: @color-black;
                 }
 
-                .action-toolbar {
-                    .primary {
-
-                    }
+                .actions-toolbar,
+                .control {
+                    margin-top: 7px;
                 }
 
                 .payment-option-inner,
                 .payment-option-inner {
                     flex: 100%;
-                    max-width: 288px;
                 }
             }
 
@@ -139,7 +169,7 @@
             .checkout-billing-address,
             .ccard {
                 .field.choice,
-                 .save-cc {
+                .save-cc {
                     input[type=checkbox] {
                         opacity: 0;
                         -webkit-appearance: none;
@@ -196,9 +226,9 @@
                 line-height: 21px;
                 color: @color-black;
 
-                    a {
-                        color: @color-black;
-                    }
+                a {
+                    color: @color-black;
+                }
             }
 
             .payment-method-braintree {
@@ -529,7 +559,23 @@
 //  Mobile
 //  _____________________________________________
 
+
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+
+    .checkout-index-index {
+        .promoBlock {
+            padding-bottom: 69px;
+
+            .discount-code {
+                margin-bottom: 50px;
+            }
+        }
+        .promoBlock-wrapper {
+            .promo-title {
+                margin-bottom: 15px;
+            }
+        }
+    }
     .checkout-payment-method {
         .payment-methods {
             .lib-css(margin, 0 -(@checkout-payment-method-title-mobile__padding));
@@ -560,9 +606,22 @@
 //  Desktop
 //  _____________________________________________
 
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {
+    .ship-to,
+    .ship-via {
+        width: 100%;
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .promoBlock {
+        display: flex;
+    }
+}
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
 
     .checkout-index-index {
+
         .promo-title {
             font-size: 36px;
         }
@@ -571,6 +630,13 @@
             .payment-option {
                 flex: 50%;
                 flex-wrap: wrap;
+            }
+
+            .form-discount .payment-option-inner,
+            .form-giftcard-account .payment-option-inner,
+            .form-discount .payment-option-inner,
+            .form-giftcard-account .payment-option-inner {
+                max-width: 288px;
             }
         }
         .payment-methods-wrapper {

@@ -44,6 +44,9 @@
 & when (@media-common = true) {
 
     .checkout-index-index {
+        .action-help {
+            display: none !important;
+        }
         .opc-wrapper {
             .step-title {
                 margin-bottom: 10px;
@@ -72,10 +75,24 @@
         }
         .checkout-shipping-wrapper {
             .shipping-address-items {
-                display: flex;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(253px, 1fr));
+                grid-gap: 1.4em;
+
                 .shipping-address-item {
                     width: 100%;
                     position: relative;
+                }
+
+                .shipping-address-item-wrapper {
+                    width: 64%;
+                    margin: auto;
+                    margin-top: 18px;
+                }
+
+                .customer-name-wrapper {
+                    margin-bottom: 5px;
+                    display: inline-block;
                 }
 
                 .action-select-shipping-item {
@@ -89,6 +106,8 @@
                     padding: 0;
                     position: absolute;
                     left: 20px;
+                    top: 20px;
+                    margin: 0;
                 }
             }
 
@@ -103,13 +122,16 @@
             border: 1px solid @border-color__base;
             border-bottom: 3px solid @border-color__base;
             padding: 30px;
-            width: 100%;
             margin-bottom: 40px;
             .table-checkout-shipping-method,
             .fieldset,
             .field {
                 margin: 0;
             }
+        }
+
+        .promoBlock {
+            margin-bottom: 15px;
         }
 
         .promoBlock-wrapper {
@@ -156,6 +178,11 @@
                     }
                 }
             }
+            .form-giftcard-account {
+                .action-add {
+                    margin-right: 0;
+                }
+            }
         }
 
         &.shipping-step {
@@ -164,9 +191,9 @@
             }
         }
 
-        .popup-authentication {
+        .modal-popup {
 
-            .modal-popup .modal-inner-wrap {
+            .modal-inner-wrap {
                 width: 600px;
 
                 .form-shipping-address {
@@ -181,69 +208,9 @@
                     max-width: none;
                     display: flex !important;
 
-                    .field[name='shippingAddress.firstname'],
-                    .field[name='shippingAddress.lastname'] {
-                        max-width: 262px;
-                        float: left;
-                        width: 100%;
-                    }
-
-                    .field[name='shippingAddress.street.0'] {
-                        margin-bottom: 10px;
-                    }
-
-                    .field[name='shippingAddress.street.1'] {
-                        margin-bottom: 0;
-                    }
-
-                    .field[name='shippingAddress.firstname'] {
-                        margin-right: 15px;
-                    }
-
-                    .field[name='shippingAddress.street.2'] {
-                        display: none;
-                    }
-
-                    .field[name='shippingAddress.city'],
-                    .field[name='shippingAddress.region_id'],
-                    .field[name='shippingAddress.country_id'] {
-                        max-width: 193px;
-                        float: left;
-                        margin-right: 15px;
-                        width: 100%;
-                    }
-
-                    .field[name='shippingAddress.region_id'],
-                    .field[name='shippingAddress.country_id'] {
-                        select {
-                            height: 45px;
-                        }
-                    }
-
-                    .field[name='shippingAddress.country_id'] {
-                        max-width: 192px;
-                        width: 100%;
-                        float: left;
-                    }
-
-                    .field[name='shippingAddress.postcode'] {
-                        max-width: 124px;
-                        float: left;
-                        width: 100%;
-                    }
-
-                    .field[name='shippingAddress.telephone'] {
-                        max-width: 332px;
-                        width: 100%;
-                        float: left;
-
-                        input {
-                            width: 100%;
-                        }
-
-                        .field-tooltip {
-                            display: none;
-                        }
+                    .field.choice {
+                        display: inline-block;
+                        margin: 0;
                     }
 
                     label {
@@ -255,8 +222,21 @@
 
 
             }
+            .modal-footer {
+                border: none;
+
+                .action-save-address {
+                    width: 169px;
+                    height: 45px;
+                    background: @color-black;
+                    color: @color-white;
+                    line-height: 34px;
+                    border: none;
+                }
+            }
+
             .action-hide-popup {
-                display: none;
+                display: none !important;
             }
             .action-close {
                 margin: 15px;
@@ -322,7 +302,6 @@
             display: inline-block;
             position: relative;
             word-wrap: break-word;
-            padding: 20px 30px 30px 30px;
             flex: auto;
 
             a {
@@ -403,9 +382,7 @@
         .promoBlock {
             border: 1px solid @border-color__base;
             border-bottom: 3px solid @border-color__base;
-            padding: 30px;
-            width: 100%;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
             .table-checkout-shipping-method,
             .fieldset,
             .field {
@@ -433,6 +410,10 @@
                 height: 45px;
                 padding: 0;
                 border: none;
+            }
+
+            .action.remind {
+                color: @color-black;
             }
         }
 
@@ -569,7 +550,6 @@
 
         .methods-shipping {
             .lib-css(border-bottom, @checkout-step-title__border);
-            padding-top: @indent__l;
         }
 
         .edit-address-link {
@@ -590,9 +570,90 @@
     }
 }
 
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .checkout-index-index {
+        .opc-wrapper .shipping-form-inner,
+        .promoBlock,
+        .checkout-shipping-wrapper,
+        .form-login {
+            padding: 20px;
+        }
+
+        .checkout-shipping-address {
+            margin-top: 15px;
+        }
+
+        .checkout-shipping-wrapper {
+            margin-bottom: 40px;
+        }
+
+
+        .authentication-wrapper,
+        .opc-wrapper {
+            width: 100%;
+        }
+
+        .table-checkout-shipping-method {
+            tbody tr {
+                padding: 17px 20px 50px 18px;
+                display: block;
+                width: auto;
+
+                input {
+                    margin-top: 5px;
+                    height: auto;
+                }
+            }
+        }
+
+        .form-shipping-address {
+            .field[name='shippingAddress.street.2'] {
+                display: none;
+            }
+
+            .field {
+                margin-bottom: 20px;
+            }
+
+            .field[name='shippingAddress.street.1'] {
+                margin-bottom: 0;
+            }
+
+            select {
+                height: 45px;
+            }
+        }
+
+        .opc-wrapper {
+            .step-title {
+                font-size: 24px;
+            }
+
+            .form-login {
+                .legend {
+                    font-size: 11px;
+                }
+
+                button.primary {
+                    width: 100%;
+                    margin-top: 20px;
+                }
+            }
+
+        }
+
+        .promoBlock-wrapper {
+            width: 100%;
+        }
+    }
+}
+
+
 //
 //  Desktop
 //  _____________________________________________
+
 
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     .checkout-shipping-method {
@@ -609,17 +670,22 @@
         }
     }
 
-    .promoBlock-wrapper {
-        max-width: 877px;
-    }
+    .checkout-index-index {
+        .shipping-form-inner {
+            padding: 30px;
+        }
+        #shipping-new-address-form {
+            max-width: 580px;
+            display: inline-block;
+        }
 
-    .checkout-shipping-wrapper {
-        max-width: 815px;
+        .promoBlock {
+            padding-bottom: 74px;
+        }
     }
 
     .promoBlock {
         padding: 30px 0 30px 30px;
-        max-width: 815px;
 
         .field {
             max-width: 540px;
@@ -635,7 +701,6 @@
         .form-login,
         .promoBlock {
             padding: 30px 0 30px 30px;
-            max-width: 877px;
 
             .field {
                 max-width: 540px;
@@ -648,11 +713,6 @@
                 max-width: 540px;
                 margin-bottom: 22px;
             }
-        }
-
-        #shipping-new-address-form {
-            max-width: 580px;
-            display: inline-block;
         }
 
         .form-shipping-address {
@@ -741,16 +801,12 @@
                 }
 
                 td {
-                   &:first-child {
-                       top: 12px;
-                   }
+                    &:first-child {
+                        top: 12px;
+                    }
                 }
             }
         }
-    }
-
-    .shipping-form-inner {
-        max-width: 815px;
     }
 
     .methods-shipping {
@@ -763,8 +819,7 @@
     .checkout-shipping-wrapper {
         .shipping-address-items {
             .shipping-address-item {
-                flex: 0 0 19.8%;
-                padding: 20px 50px 50px 50px;
+
             }
         }
 
@@ -774,12 +829,96 @@
             }
         }
     }
-}
 
-.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__l) {
-    .opc-wrapper {
-        .shipping-address-item {
-            .lib-css(width, 32%);
+    .checkout-index-index {
+        .modal-popup {
+
+            .modal-inner-wrap {
+                width: 600px;
+
+                .form-shipping-address {
+                    .field[name='shippingAddress.firstname'],
+                    .field[name='shippingAddress.lastname'] {
+                        max-width: 262px;
+                        float: left;
+                        width: 100%;
+                    }
+
+                    .field[name='shippingAddress.street.0'] {
+                        margin-bottom: 10px;
+                    }
+
+                    .field[name='shippingAddress.street.1'] {
+                        margin-bottom: 0;
+                    }
+
+                    .field[name='shippingAddress.firstname'] {
+                        margin-right: 15px;
+                    }
+
+                    .field[name='shippingAddress.street.2'] {
+                        display: none;
+                    }
+
+                    .field[name='shippingAddress.city'],
+                    .field[name='shippingAddress.region_id'],
+                    .field[name='shippingAddress.country_id'] {
+                        max-width: 193px;
+                        float: left;
+                        margin-right: 15px;
+                        width: 100%;
+                    }
+
+                    .field[name='shippingAddress.region_id'],
+                    .field[name='shippingAddress.country_id'] {
+                        select {
+                            height: 45px;
+                        }
+                    }
+
+                    .field[name='shippingAddress.country_id'] {
+                        max-width: 192px;
+                        width: 100%;
+                        float: left;
+                    }
+
+                    .field[name='shippingAddress.postcode'] {
+                        max-width: 124px;
+                        float: left;
+                        width: 100%;
+                    }
+
+                    .field[name='shippingAddress.telephone'] {
+                        max-width: 332px;
+                        width: 100%;
+                        float: left;
+
+                        input {
+                            width: 100%;
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__l) {
+
+    .shipping-form-inner ,
+    .checkout-shipping-wrapper {
+        max-width: 815px;
+    }
+
+    .opc-wrapper {
+        .shipping-address-item {
+
+        }
+    }
+
+    .promoBlock-wrapper {
+        width: 70.739%;
+    }
+
+}
+
